@@ -1,5 +1,14 @@
-import { Debouncer, MarkdownView, Plugin, TFile, debounce, requestUrl } from 'obsidian'
+import { App, Debouncer, MarkdownView, Plugin, TFile, debounce, requestUrl } from 'obsidian'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
+
+function listAllPlugins(app: App) {
+  const plugins = Object.values(app.plugins.plugins).map((plugin) => ({
+    id: plugin.manifest.id,
+    name: plugin.manifest.name,
+    version: plugin.manifest.version,
+  }))
+  return plugins
+}
 
 function formatDateToYYYYMMDD(date: Date) {
   // Extracting individual components
@@ -45,7 +54,7 @@ export default class DailyStats extends Plugin {
   debouncedUpdateDb: Debouncer<[key: string, value: string], Promise<any>>
 
   async onload() {
-    console.log('--Obsidian Export Stats Plugin Loaded')
+    console.log('--Obsidian Export Stats Plugin Loaded2')
     // console.log({
     //   dir: this.app.vault.configDir,
     //   root: this.app.vault.getRoot(),
@@ -53,6 +62,7 @@ export default class DailyStats extends Plugin {
     //   name: this.app.vault.adapter.getName()
     //   path: this.app.vault.adapter.basePath
     // })
+
     await this.loadSettings()
 
     this.statusBarEl = this.addStatusBarItem()
@@ -85,14 +95,14 @@ export default class DailyStats extends Plugin {
     this.registerInterval(
       window.setInterval(() => {
         this.statusBarEl.setText(this.currentWordCount + ' words today ')
-      }, 200),
+      }, 2000),
     )
 
     this.registerInterval(
       window.setInterval(() => {
         this.updateDate()
         this.saveSettings()
-      }, 1000),
+      }, 5000),
     )
 
     if (this.app.workspace.layoutReady) {
@@ -100,6 +110,9 @@ export default class DailyStats extends Plugin {
     } else {
       this.registerEvent(this.app.workspace.on('layout-ready', this.initLeaf.bind(this)))
     }
+
+    const plugins = listAllPlugins(this.app)
+    this.updateDb(`user/1/vault/${this.app.vault.adapter.getName()}/plugins`, JSON.stringify(plugins))
   }
 
   initLeaf(): void {
@@ -135,11 +148,15 @@ export default class DailyStats extends Plugin {
       }
     }
 
+    console.log('text----', text, words, text?.length)
+
     return words
   }
 
   updateWordCount(contents: string, filepath: string) {
+    console.time('wordCount')
     const curr = this.getWordCount(contents)
+    console.timeEnd('wordCount')
     if (this.settings.dayCounts.hasOwnProperty(this.today)) {
       if (this.settings.todaysWordCount.hasOwnProperty(filepath)) {
         //updating existing file

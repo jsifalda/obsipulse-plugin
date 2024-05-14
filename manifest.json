@@ -1,10 +1,10 @@
 {
   "id": "obsidian-stats-export",
   "name": "Daily Stats Export",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "minAppVersion": "0.10.12",
   "description": "Track your daily word count across all notes in your vault.",
-  "author": "JSifalda",
+  "author": "jsifalda",
   "authorUrl": "https://github.com/jsifalda",
   "isDesktopOnly": false
 }
