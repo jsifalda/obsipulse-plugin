@@ -1,5 +1,6 @@
 {
-  "name": "obsidian-stats-export",
+  "name": "obsipulse",
+  "private": true,
   "version": "1.0.0",
   "description": "This is an Obsidian.md plugin that lets you view your daily word count.",
   "main": "main.js",
