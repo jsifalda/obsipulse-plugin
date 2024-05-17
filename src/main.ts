@@ -37,11 +37,14 @@ interface WordCount {
 interface DailyStatsSettings {
   dayCounts: Record<string, number>
   todaysWordCount: Record<string, WordCount>
+
+  userId: string | null
 }
 
 const DEFAULT_SETTINGS: DailyStatsSettings = {
   dayCounts: {},
   todaysWordCount: {},
+  userId: null,
 }
 
 export default class DailyStats extends Plugin {
@@ -54,16 +57,21 @@ export default class DailyStats extends Plugin {
   debouncedUpdateDb: Debouncer<[key: string, value: string], Promise<any>>
 
   async onload() {
-    console.log('--Obsidian Export Stats Plugin Loaded2')
+    console.log('--Obsidian Export Stats Plugin Loaded')
     // console.log({
     //   dir: this.app.vault.configDir,
     //   root: this.app.vault.getRoot(),
     //   dirname: __dirname,
-    //   name: this.app.vault.adapter.getName()
-    //   path: this.app.vault.adapter.basePath
+    //   name: this.app.vault.adapter.getName(),
+    //   path: this.app.vault.adapter.basePath,
+    //   id: this.app.appId,
     // })
 
     await this.loadSettings()
+
+    if (!this.settings.userId) {
+      this.settings.userId = this.app.appId
+    }
 
     this.statusBarEl = this.addStatusBarItem()
     this.updateDate()
@@ -111,8 +119,20 @@ export default class DailyStats extends Plugin {
       this.registerEvent(this.app.workspace.on('layout-ready', this.initLeaf.bind(this)))
     }
 
+    // TODO: refresh user plugins list on update
     const plugins = listAllPlugins(this.app)
-    this.updateDb(`user/1/vault/${this.app.vault.adapter.getName()}/plugins`, JSON.stringify(plugins))
+    this.updateDb(
+      `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/plugins`,
+      JSON.stringify(plugins),
+    )
+
+    this.addCommand({
+      id: 'open-obsipulse',
+      name: 'Open ObsiPulse Profile',
+      callback: () => {
+        window.open(`https://www.obsipulse.com/profile/${this.settings.userId}`, '_blank')
+      },
+    })
   }
 
   initLeaf(): void {
@@ -185,7 +205,7 @@ export default class DailyStats extends Plugin {
     console.log('---word count updated', this.currentWordCount, this.settings.dayCounts, this.settings)
     if (this.debouncedUpdateDb) {
       this.debouncedUpdateDb(
-        `user/1/vault/${this.app.vault.adapter.getName()}/daily-counts`,
+        `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
         JSON.stringify(this.settings.dayCounts),
       )
     }
