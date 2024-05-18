@@ -12,7 +12,7 @@ const encrypt = (text: string, version = 'v1') => {
   // const encryptedText = iv.toString('base64') + ':' + encrypted
 
   const encryptedText = CryptoJS.AES.encrypt(text, secretKey).toString()
-  console.log('Encrypted Text:', encryptedText)
+  // console.log('Encrypted Text:', encryptedText)
   return `${version}:${encryptedText}`
 }
 
@@ -28,7 +28,7 @@ const decrypt = (encryptedText: string) => {
   // decrypted += decipher.final('utf8')
   const decryptedBytes = CryptoJS.AES.decrypt(text, secretKey)
   const decrypted = decryptedBytes.toString(CryptoJS.enc.Utf8)
-  console.log('Decrypted Text:', decrypted)
+  // console.log('Decrypted Text:', decrypted)
   return decrypted
 }
 

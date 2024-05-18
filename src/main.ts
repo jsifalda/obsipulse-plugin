@@ -107,13 +107,13 @@ export default class DailyStats extends Plugin {
 
     await this.loadSettings()
 
-    const key = Encryption().encrypt(
-      JSON.stringify({ key: '6KAcZY2y658x559oAmbNmL5840oxQo', userId: '0b3417c00370b98c' }),
-    )
-    console.log({ key, l: key.length })
-    const testKey = Encryption().decrypt(key)
-    console.log({ testKey })
-    parseLicenseKey(key)
+    // const key = Encryption().encrypt(
+    //   JSON.stringify({ key: '6KAcZY2y658x559oAmbNmL5840oxQo', userId: '0b3417c00370b98c' }),
+    // )
+    // console.log({ key, l: key.length })
+    // const testKey = Encryption().decrypt(key)
+    // console.log({ testKey })
+    // parseLicenseKey(key)
 
     if (this.settings.key) {
       try {
