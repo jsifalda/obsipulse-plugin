@@ -42,6 +42,7 @@ class DailyStatsSettingTab extends PluginSettingTab {
 
             const parsedKey = parseLicenseKey(value)
             this.plugin.settings.userId = parsedKey.userId
+            this.plugin.onLicenseKeyUpdate()
           }),
       )
   }
