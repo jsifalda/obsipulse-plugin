@@ -107,13 +107,13 @@ export default class DailyStats extends Plugin {
 
     await this.loadSettings()
 
-    // const key = Encryption().encrypt(
-    //   JSON.stringify({ key: '6KAcZY2y658x559oAmbNmL5840oxQo', userId: '0b3417c00370b98c' }),
-    // )
-    // console.log({ key, l: key.length })
-    // const testKey = Encryption().decrypt(key)
-    // console.log({ testKey })
-    // parseLicenseKey(key)
+    const key = Encryption().encrypt(
+      JSON.stringify({ key: '6KAcZY2y658x559oAmbNmL5840oxQo', userId: '0b3417c00370b98c' }),
+    )
+    console.log({ key, l: key.length })
+    const testKey = Encryption().decrypt(key)
+    console.log({ testKey })
+    parseLicenseKey(key)
 
     if (this.settings.key) {
       try {
@@ -230,9 +230,7 @@ export default class DailyStats extends Plugin {
         }
       }
     }
-
-    console.log('text----', text, words, text?.length)
-
+    // console.log('text----', text, words, text?.length)
     return words
   }
 
@@ -271,6 +269,8 @@ export default class DailyStats extends Plugin {
         `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
         JSON.stringify(this.settings.dayCounts),
       )
+    } else {
+      console.log('--no db update, missing userId', this.settings.userId)
     }
   }
 
