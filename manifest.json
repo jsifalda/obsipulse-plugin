@@ -1,7 +1,7 @@
 {
   "id": "obsipulse",
   "name": "ObsiPulse - Stats Export & Public Profile",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "minAppVersion": "0.10.12",
   "description": "Track your daily word count across all notes in your vault.",
   "author": "jsifalda",
