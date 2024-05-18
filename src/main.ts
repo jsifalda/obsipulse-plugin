@@ -95,7 +95,7 @@ export default class DailyStats extends Plugin {
   debouncedUpdateDb: Debouncer<[key: string, value: string], Promise<any>>
 
   async onload() {
-    console.log('--Obsidian Export Stats Plugin Loaded')
+    console.log('ObsiPulse Plugin Loaded, v:', this.manifest.version)
     // console.log({
     //   dir: this.app.vault.configDir,
     //   root: this.app.vault.getRoot(),
@@ -119,7 +119,7 @@ export default class DailyStats extends Plugin {
       try {
         const parsedKey = parseLicenseKey(this.settings.key)
         this.settings.userId = parsedKey.userId
-        new Notice('ObsiPulse plugin has been loaded!')
+        // new Notice('ObsiPulse plugin has been loaded!')
         this.onLicenseKeyUpdate()
       } catch (e) {
         console.error('--error parsing key', e, this.settings.key)
