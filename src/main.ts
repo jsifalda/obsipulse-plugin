@@ -1,32 +1,50 @@
-import { App, Debouncer, MarkdownView, Plugin, TFile, debounce, requestUrl } from 'obsidian'
+import {
+  App,
+  Debouncer,
+  MarkdownView,
+  Notice,
+  Plugin,
+  PluginSettingTab,
+  Setting,
+  TFile,
+  debounce,
+  requestUrl,
+} from 'obsidian'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
+import { Encryption } from './helpers/Encryption'
+import { formatDateToYYYYMMDD } from './helpers/formatDateToYYYYMMDD'
+import { listAllPlugins } from './helpers/listAllPlugins'
 
-function listAllPlugins(app: App) {
-  const plugins = Object.values(app.plugins.plugins).map((plugin) => ({
-    id: plugin.manifest.id,
-    name: plugin.manifest.name,
-    version: plugin.manifest.version,
-  }))
-  return plugins
-}
+class DailyStatsSettingTab extends PluginSettingTab {
+  plugin: DailyStats
 
-function formatDateToYYYYMMDD(date: Date) {
-  // Extracting individual components
-  const year = date.getFullYear()
-  let month = String(date.getMonth() + 1) // Months are zero-based!
-  let day = String(date.getDate())
-
-  // Ensuring two-digit formats for month and day
-  if (+month < 10) {
-    month = '0' + month
+  constructor(app: App, plugin: DailyStats) {
+    super(app, plugin)
+    this.plugin = plugin
   }
 
-  if (+day < 10) {
-    day = '0' + day
-  }
+  display(): void {
+    const { containerEl } = this
 
-  // Concatenating components in YYYY-MM-DD format
-  return `${year}-${month}-${day}`
+    containerEl.empty()
+    containerEl.createEl('h2', { text: 'ObsiPulse Settings' })
+
+    new Setting(containerEl)
+      .setName('License Key')
+      .setDesc('Enter your license key to activate ObsiPulse plugin')
+      .addText((text) =>
+        text
+          .setPlaceholder('Your license key here...')
+          .setValue(this.plugin.settings.key || '')
+          .onChange(async (value) => {
+            this.plugin.settings.key = value
+            await this.plugin.saveSettings()
+
+            const parsedKey = parseLicenseKey(value)
+            this.plugin.settings.userId = parsedKey.userId
+          }),
+      )
+  }
 }
 
 interface WordCount {
@@ -38,13 +56,33 @@ interface DailyStatsSettings {
   dayCounts: Record<string, number>
   todaysWordCount: Record<string, WordCount>
 
-  userId: string | null
+  userId?: string
+
+  key?: string
 }
 
 const DEFAULT_SETTINGS: DailyStatsSettings = {
   dayCounts: {},
   todaysWordCount: {},
   userId: null,
+}
+
+interface ParsedLicenseKey {
+  key: string
+  userId: string
+}
+
+const parseLicenseKey = (key: string) => {
+  // console.log('--parsing key', key)
+  const parsedKey = Encryption().decrypt(key)
+  // console.log({ parsedKey })
+  try {
+    const value = JSON.parse(parsedKey) as ParsedLicenseKey
+    console.log({ value })
+    return value
+  } catch (e) {
+    console.error('--error decrypting key', e)
+  }
 }
 
 export default class DailyStats extends Plugin {
@@ -69,8 +107,26 @@ export default class DailyStats extends Plugin {
 
     await this.loadSettings()
 
-    if (!this.settings.userId) {
-      this.settings.userId = this.app.appId
+    // const key = Encryption().encrypt(
+    //   JSON.stringify({ key: '6KAcZY2y658x559oAmbNmL5840oxQo', userId: '0b3417c00370b98c' }),
+    // )
+    // console.log({ key, l: key.length })
+    // const testKey = Encryption().decrypt(key)
+    // console.log({ testKey })
+    // parseLicenseKey(key)
+
+    if (this.settings.key) {
+      try {
+        const parsedKey = parseLicenseKey(this.settings.key)
+        this.settings.userId = parsedKey.userId
+        new Notice('ObsiPulse plugin has been loaded!')
+        this.onLicenseKeyUpdate()
+      } catch (e) {
+        console.error('--error parsing key', e, this.settings.key)
+        new Notice('Invalid licence key for ObsiPulse plugin')
+      }
+    } else {
+      new Notice('Missing licence key for ObsiPulse plugin')
     }
 
     this.statusBarEl = this.addStatusBarItem()
@@ -119,29 +175,36 @@ export default class DailyStats extends Plugin {
       this.registerEvent(this.app.workspace.on('layout-ready', this.initLeaf.bind(this)))
     }
 
-    // TODO: refresh user plugins list on update
-    const plugins = listAllPlugins(this.app)
-    this.updateDb(
-      `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/plugins`,
-      JSON.stringify(plugins),
-    )
-
     this.addCommand({
       id: 'open-obsipulse',
       name: 'Open ObsiPulse Profile',
       callback: () => {
+        if (!this.settings.userId) {
+          return new Notice('Missing licence key for ObsiPulse plugin')
+        }
+
         window.open(`https://www.obsipulse.com/profile/${this.settings.userId}`, '_blank')
       },
     })
+
+    this.addSettingTab(new DailyStatsSettingTab(this.app, this))
+  }
+
+  onLicenseKeyUpdate() {
+    // TODO: refresh user plugins list on update
+    if (this.settings.userId) {
+      const plugins = listAllPlugins(this.app)
+      this.updateDb(
+        `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/plugins`,
+        JSON.stringify(plugins),
+      )
+    }
   }
 
   initLeaf(): void {
     if (this.app.workspace.getLeavesOfType(VIEW_TYPE_STATS_TRACKER).length) {
       return
     }
-    this.app.workspace.getRightLeaf(false).setViewState({
-      type: VIEW_TYPE_STATS_TRACKER,
-    })
   }
 
   onQuickPreview(file: TFile, contents: string) {
@@ -203,7 +266,7 @@ export default class DailyStats extends Plugin {
       .reduce((a, b) => a + b, 0)
     this.settings.dayCounts[this.today] = this.currentWordCount
     console.log('---word count updated', this.currentWordCount, this.settings.dayCounts, this.settings)
-    if (this.debouncedUpdateDb) {
+    if (this.debouncedUpdateDb && this.settings.userId) {
       this.debouncedUpdateDb(
         `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
         JSON.stringify(this.settings.dayCounts),
@@ -212,7 +275,7 @@ export default class DailyStats extends Plugin {
   }
 
   async updateDb(key: string, value: any) {
-    console.log('---calling update db')
+    // console.log('---calling update db')
     return requestUrl({
       method: 'POST',
       url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
