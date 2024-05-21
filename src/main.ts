@@ -109,7 +109,7 @@ export default class DailyStats extends Plugin {
     await this.loadSettings()
 
     // const key = Encryption().encrypt(
-    //   JSON.stringify({ key: '6KAcZY2y658x559oAmbNmL5840oxQo', userId: '0b3417c00370b98c' }),
+    //   JSON.stringify({ key: 'pipX0t3I12V47y7wXVbIH4X42A84nB', userId: '9Sd3j0JMV0I4VtRt' }),
     // )
     // console.log({ key, l: key.length })
     // const testKey = Encryption().decrypt(key)
@@ -161,6 +161,10 @@ export default class DailyStats extends Plugin {
     this.registerInterval(
       window.setInterval(() => {
         this.statusBarEl.setText(this.currentWordCount + ' words today ')
+        this.statusBarEl.onclick = () => {
+          this.openObsiPulseProfile()
+        }
+        this.statusBarEl.setAttribute('style', 'cursor: pointer')
       }, 2000),
     )
 
@@ -181,15 +185,19 @@ export default class DailyStats extends Plugin {
       id: 'open-obsipulse',
       name: 'Open ObsiPulse Profile',
       callback: () => {
-        if (!this.settings.userId) {
-          return new Notice('Missing licence key for ObsiPulse plugin')
-        }
-
-        window.open(`https://www.obsipulse.com/profile/${this.settings.userId}`, '_blank')
+        this.openObsiPulseProfile()
       },
     })
 
     this.addSettingTab(new DailyStatsSettingTab(this.app, this))
+  }
+
+  openObsiPulseProfile() {
+    if (!this.settings.userId) {
+      return new Notice('Missing licence key for ObsiPulse plugin')
+    }
+
+    window.open(`https://www.obsipulse.com/profile/${this.settings.userId}`, '_blank')
   }
 
   onLicenseKeyUpdate() {
