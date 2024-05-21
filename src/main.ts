@@ -91,9 +91,9 @@ export default class DailyStats extends Plugin {
   statusBarEl: HTMLElement
   currentWordCount: number
   today: string
-  debouncedUpdate: Debouncer<[contents: string, filepath: string], void>
+  debouncedUpdate?: Debouncer<[contents: string, filepath: string], void>
 
-  debouncedUpdateDb: Debouncer<[key: string, value: string], Promise<any>>
+  debouncedUpdateDb?: Debouncer<[key: string, value: string], Promise<any>>
 
   async onload() {
     console.log('ObsiPulse Plugin Loaded, v:', this.manifest.version)
@@ -132,11 +132,6 @@ export default class DailyStats extends Plugin {
 
     this.statusBarEl = this.addStatusBarItem()
     this.updateDate()
-    if (this.settings.dayCounts.hasOwnProperty(this.today)) {
-      this.updateCounts()
-    } else {
-      this.currentWordCount = 0
-    }
 
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
@@ -154,6 +149,12 @@ export default class DailyStats extends Plugin {
       1000,
       false,
     )
+
+    if (this.settings.dayCounts.hasOwnProperty(this.today)) {
+      this.updateCounts()
+    } else {
+      this.currentWordCount = 0
+    }
 
     this.registerEvent(this.app.workspace.on('quick-preview', this.onQuickPreview.bind(this)))
 
@@ -264,32 +265,36 @@ export default class DailyStats extends Plugin {
       .map((wordCount) => Math.max(0, wordCount.current - wordCount.initial))
       .reduce((a, b) => a + b, 0)
     this.settings.dayCounts[this.today] = this.currentWordCount
+
     console.log('---word count updated', this.currentWordCount, this.settings.dayCounts, this.settings)
-    if (this.debouncedUpdateDb && this.settings.userId) {
-      this.debouncedUpdateDb(
+
+    if (this.settings.userId) {
+      this.debouncedUpdateDb?.(
         `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
         JSON.stringify(this.settings.dayCounts),
       )
     } else {
-      console.log('--no db update, missing userId', this.settings.userId)
+      console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
     }
   }
 
   async updateDb(key: string, value: any) {
     // console.log('---calling update db')
+    const body = JSON.stringify({
+      key,
+      value,
+    })
+
     return requestUrl({
       method: 'POST',
       url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({
-        key,
-        value,
-      }),
+      body,
     })
       .then((result) => {
-        console.log('--db update done', result)
+        console.log('--db update done', result?.status, { key, value })
       })
       .catch(console.error)
   }
