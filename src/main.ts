@@ -160,11 +160,16 @@ export default class DailyStats extends Plugin {
 
     this.registerInterval(
       window.setInterval(() => {
-        this.statusBarEl.setText(this.currentWordCount + ' words today ')
-        this.statusBarEl.onclick = () => {
-          this.openObsiPulseProfile()
+        if (this.settings.userId) {
+          this.statusBarEl.setText(this.currentWordCount + ' words today ')
+          this.statusBarEl.onclick = () => {
+            this.openObsiPulseProfile()
+          }
+          this.statusBarEl.setAttribute('style', 'cursor: pointer')
+        } else {
+          this.statusBarEl.setText('No License Key for ObsiPulse')
+          this.statusBarEl.setAttribute('style', 'color: red')
         }
-        this.statusBarEl.setAttribute('style', 'cursor: pointer')
       }, 2000),
     )
 
@@ -245,9 +250,10 @@ export default class DailyStats extends Plugin {
   }
 
   updateWordCount(contents: string, filepath: string) {
-    console.time('wordCount')
+    // console.time('wordCount')
     const curr = this.getWordCount(contents)
-    console.timeEnd('wordCount')
+    // console.timeEnd('wordCount')
+
     if (this.settings.dayCounts.hasOwnProperty(this.today)) {
       if (this.settings.todaysWordCount.hasOwnProperty(filepath)) {
         //updating existing file
