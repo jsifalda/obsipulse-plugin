@@ -139,8 +139,8 @@ export default class DailyStats extends Plugin {
       (contents: string, filepath: string) => {
         this.updateWordCount(contents, filepath)
       },
-      400,
-      // 1000,
+      // 400,
+      1000,
       false,
     )
 
@@ -192,11 +192,11 @@ export default class DailyStats extends Plugin {
 
     this.registerInterval(
       window.setInterval(() => {
-        console.log('----interval called', this.hasCountChanged)
+        // console.log('----interval called', this.hasCountChanged)
         if (this.hasCountChanged) {
           this.hasCountChanged = false
           if (this.settings.userId) {
-            console.log('---calling update db')
+            // console.log('---calling update db')
             this.updateDb(
               `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
               JSON.stringify(this.settings.dayCounts),

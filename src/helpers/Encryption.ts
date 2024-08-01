@@ -1,5 +1,15 @@
 import * as CryptoJS from 'crypto-js'
 
+/**
+ *
+ * !
+ * !!
+ * !!!
+ *
+ * NOTE: if you do any change in this file/logic,
+ *  dont forget to change it in obsidian app file as well
+ */
+
 const secretKey = '!7iCQt*7(sLE$JW9'
 // const algorithm = 'aes-128-cbc'
 // const key = crypto.scryptSync(secretKey, 'salt', 16)
