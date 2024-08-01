@@ -95,6 +95,8 @@ export default class DailyStats extends Plugin {
 
   debouncedUpdateDb?: Debouncer<[key: string, value: string], Promise<any>>
 
+  hasCountChanged: boolean = false
+
   async onload() {
     console.log('ObsiPulse Plugin Loaded, v:', this.manifest.version)
     // console.log({
@@ -137,16 +139,8 @@ export default class DailyStats extends Plugin {
       (contents: string, filepath: string) => {
         this.updateWordCount(contents, filepath)
       },
-      // 400,
-      1000,
-      false,
-    )
-
-    this.debouncedUpdateDb = debounce(
-      (key: string, value: string) => {
-        this.updateDb(key, value)
-      },
-      1000,
+      400,
+      // 1000,
       false,
     )
 
@@ -195,6 +189,28 @@ export default class DailyStats extends Plugin {
     })
 
     this.addSettingTab(new DailyStatsSettingTab(this.app, this))
+
+    this.registerInterval(
+      window.setInterval(() => {
+        console.log('----interval called', this.hasCountChanged)
+        if (this.hasCountChanged) {
+          this.hasCountChanged = false
+          if (this.settings.userId) {
+            console.log('---calling update db')
+            this.updateDb(
+              `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
+              JSON.stringify(this.settings.dayCounts),
+            )
+          } else {
+            console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
+          }
+        }
+      }, 60000),
+    )
+  }
+
+  onunload(): void {
+    console.log('--ObsiPulse Plugin Unloaded')
   }
 
   openObsiPulseProfile() {
@@ -282,14 +298,7 @@ export default class DailyStats extends Plugin {
 
     console.log('---word count updated', this.currentWordCount, this.settings.dayCounts, this.settings)
 
-    if (this.settings.userId) {
-      this.debouncedUpdateDb?.(
-        `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
-        JSON.stringify(this.settings.dayCounts),
-      )
-    } else {
-      console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
-    }
+    this.hasCountChanged = true
   }
 
   async updateDb(key: string, value: any) {
