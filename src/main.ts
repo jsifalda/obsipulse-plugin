@@ -218,7 +218,7 @@ export default class DailyStats extends Plugin {
       return new Notice('Missing licence key for ObsiPulse plugin')
     }
 
-    window.open(`https://www.obsipulse.com/profile/${this.settings.userId}`, '_blank')
+    window.open(`https://www.obsipulse.com/app/profile/${this.settings.userId}`, '_blank')
   }
 
   onLicenseKeyUpdate() {
