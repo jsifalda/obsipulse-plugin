@@ -190,9 +190,8 @@ export default class DailyStats extends Plugin {
 
     this.addSettingTab(new DailyStatsSettingTab(this.app, this))
 
-    this.registerInterval(
-      window.setInterval(() => {
-        // console.log('----interval called', this.hasCountChanged)
+    this.registerEvent(
+      this.app.vault.on('modify', () => {
         if (this.hasCountChanged) {
           this.hasCountChanged = false
           if (this.settings.userId) {
@@ -205,7 +204,7 @@ export default class DailyStats extends Plugin {
             console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
           }
         }
-      }, 60000),
+      }),
     )
   }
 
