@@ -42,7 +42,7 @@ class DailyStatsSettingTab extends PluginSettingTab {
 
             const parsedKey = parseLicenseKey(value)
             this.plugin.settings.userId = parsedKey.userId
-            this.plugin.onLicenseKeyUpdate()
+            this.plugin.updatePluginList()
           }),
       )
   }
@@ -95,7 +95,9 @@ export default class DailyStats extends Plugin {
 
   debouncedUpdateDb?: Debouncer<[key: string, value: string], Promise<any>>
 
-  hasCountChanged: boolean = false
+  private hasCountChanged: boolean = false
+
+  private previousPlugins: Set<string> = new Set()
 
   async onload() {
     console.log('ObsiPulse Plugin Loaded, v:', this.manifest.version)
@@ -122,8 +124,7 @@ export default class DailyStats extends Plugin {
       try {
         const parsedKey = parseLicenseKey(this.settings.key)
         this.settings.userId = parsedKey.userId
-        // new Notice('ObsiPulse plugin has been loaded!')
-        this.onLicenseKeyUpdate()
+        this.updatePluginList()
       } catch (e) {
         console.error('--error parsing key', e, this.settings.key)
         new Notice('Invalid licence key for ObsiPulse plugin')
@@ -134,6 +135,7 @@ export default class DailyStats extends Plugin {
 
     this.statusBarEl = this.addStatusBarItem()
     this.updateDate()
+    this.previousPlugins = new Set(this.app.plugins.enabledPlugins)
 
     this.debouncedUpdate = debounce(
       (contents: string, filepath: string) => {
@@ -172,6 +174,12 @@ export default class DailyStats extends Plugin {
         this.updateDate()
         this.saveSettings()
       }, 5000),
+    )
+
+    this.registerInterval(
+      window.setInterval(() => {
+        this.checkForPluginChanges()
+      }, 60000),
     )
 
     if (this.app.workspace.layoutReady) {
@@ -220,10 +228,10 @@ export default class DailyStats extends Plugin {
     window.open(`https://www.obsipulse.com/app/profile/${this.settings.userId}`, '_blank')
   }
 
-  onLicenseKeyUpdate() {
-    // TODO: refresh user plugins list on update
+  updatePluginList() {
     if (this.settings.userId) {
       const plugins = listAllPlugins(this.app)
+      // console.log('---updating plugin list', plugins.length)
       this.updateDb(
         `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/plugins`,
         JSON.stringify(plugins),
@@ -300,12 +308,36 @@ export default class DailyStats extends Plugin {
     this.hasCountChanged = true
   }
 
+  checkForPluginChanges() {
+    const currentPlugins = new Set<string>(this.app.plugins.enabledPlugins)
+    let pluginListHasChanged = false
+    // Check for newly enabled plugins
+    for (const plugin of currentPlugins) {
+      if (!this.previousPlugins.has(plugin)) {
+        pluginListHasChanged = true
+        break
+      }
+    }
+
+    // Check for disabled plugins
+    for (const plugin of this.previousPlugins) {
+      if (!currentPlugins.has(plugin)) {
+        pluginListHasChanged = true
+        break
+      }
+    }
+
+    if (pluginListHasChanged) {
+      this.updatePluginList()
+    }
+
+    // Update the previousPlugins set
+    this.previousPlugins = currentPlugins
+  }
+
   async updateDb(key: string, value: any) {
     // console.log('---calling update db')
-    const body = JSON.stringify({
-      key,
-      value,
-    })
+    const body = JSON.stringify({ key, value })
 
     return requestUrl({
       method: 'POST',
