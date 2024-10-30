@@ -28,7 +28,9 @@ class DailyStatsSettingTab extends PluginSettingTab {
 
     containerEl.empty()
     containerEl.createEl('h2', { text: 'ObsiPulse Settings' })
-    containerEl.createEl('strong', { text: `v: ${this.plugin.manifest.version}` })
+    containerEl.createEl('strong', { text: `Vault name: ${this.app.vault.adapter.getName()}` })
+    containerEl.createEl('br')
+    containerEl.createEl('span', { text: `Version: ${this.plugin.manifest.version}` })
 
     new Setting(containerEl)
       .setName('License Key')
