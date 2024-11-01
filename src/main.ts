@@ -15,10 +15,10 @@ import { Encryption } from './helpers/Encryption'
 import { formatDateToYYYYMMDD } from './helpers/formatDateToYYYYMMDD'
 import { listAllPlugins } from './helpers/listAllPlugins'
 
-class DailyStatsSettingTab extends PluginSettingTab {
-  plugin: DailyStats
+class ObsiPulseSettingTab extends PluginSettingTab {
+  plugin: ObsiPulse
 
-  constructor(app: App, plugin: DailyStats) {
+  constructor(app: App, plugin: ObsiPulse) {
     super(app, plugin)
     this.plugin = plugin
   }
@@ -69,7 +69,7 @@ interface WordCount {
   current: number
 }
 
-interface DailyStatsSettings {
+interface ObsiPulseSettings {
   dayCounts: Record<string, number>
   todaysWordCount: Record<string, WordCount>
 
@@ -79,7 +79,7 @@ interface DailyStatsSettings {
   publicPaths?: string[]
 }
 
-const DEFAULT_SETTINGS: DailyStatsSettings = {
+const DEFAULT_SETTINGS: ObsiPulseSettings = {
   dayCounts: {},
   todaysWordCount: {},
   userId: null,
@@ -104,8 +104,8 @@ const parseLicenseKey = (key: string) => {
   }
 }
 
-export default class DailyStats extends Plugin {
-  settings: DailyStatsSettings
+export default class ObsiPulse extends Plugin {
+  settings: ObsiPulseSettings
   statusBarEl: HTMLElement
   currentWordCount: number
   today: string
@@ -214,7 +214,7 @@ export default class DailyStats extends Plugin {
       },
     })
 
-    this.addSettingTab(new DailyStatsSettingTab(this.app, this))
+    this.addSettingTab(new ObsiPulseSettingTab(this.app, this))
 
     this.registerEvent(
       this.app.vault.on('modify', () => {
