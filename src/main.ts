@@ -48,6 +48,19 @@ class DailyStatsSettingTab extends PluginSettingTab {
             this.plugin.updatePluginList()
           }),
       )
+
+    new Setting(containerEl)
+      .setName('Files to be published')
+      .setDesc('List of files to be shared publicly via obsidian profile')
+      .addTextArea((textArea) =>
+        textArea
+          .setPlaceholder('public-path.md\n/public-dir\n!/public-dir/not-public-path.md')
+          .setValue(this.plugin.settings.publicPaths.join('\n'))
+          .onChange(async (value) => {
+            this.plugin.settings.publicPaths = value.split('\n')
+            await this.plugin.saveData(this.plugin.settings)
+          }),
+      )
   }
 }
 
@@ -63,12 +76,14 @@ interface DailyStatsSettings {
   userId?: string
 
   key?: string
+  publicPaths?: string[]
 }
 
 const DEFAULT_SETTINGS: DailyStatsSettings = {
   dayCounts: {},
   todaysWordCount: {},
   userId: null,
+  publicPaths: [],
 }
 
 interface ParsedLicenseKey {
@@ -214,6 +229,28 @@ export default class DailyStats extends Plugin {
           } else {
             console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
           }
+        }
+      }),
+    )
+
+    this.registerEvent(
+      this.app.vault.on('modify', async (file: TFile) => {
+        // console.log(
+        //   '--file',
+        //   file.path,
+        //   this.settings.publicPaths,
+        //   this.settings.publicPaths.includes(file.path),
+        // )
+        if (this.settings.publicPaths.includes(file.path)) {
+          const fileContent = await this.app.vault.read(file)
+          // const hash = md5(file.path)
+          const hash = encodeURIComponent(file.path)
+          const toSync = { stat: file.stat, content: fileContent, path: file.path }
+          // console.log('---filesToSync---', file.path, hash, toSync)
+          this.updateDb(
+            `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/files/${hash}`,
+            JSON.stringify(toSync),
+          )
         }
       }),
     )
