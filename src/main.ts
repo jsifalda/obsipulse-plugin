@@ -217,11 +217,10 @@ export default class ObsiPulse extends Plugin {
     this.addSettingTab(new ObsiPulseSettingTab(this.app, this))
 
     this.registerEvent(
-      this.app.vault.on('modify', () => {
+      this.app.workspace.on('file-open', (file: TFile) => {
         if (this.hasCountChanged) {
           this.hasCountChanged = false
           if (this.settings.userId) {
-            // console.log('---calling update db')
             this.updateDb(
               `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
               JSON.stringify(this.settings.dayCounts),
@@ -232,6 +231,22 @@ export default class ObsiPulse extends Plugin {
         }
       }),
     )
+
+    // this.registerEvent(
+    //   this.app.vault.on('modify', () => {
+    //     if (this.hasCountChanged) {
+    //       this.hasCountChanged = false
+    //       if (this.settings.userId) {
+    //         this.updateDb(
+    //           `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
+    //           JSON.stringify(this.settings.dayCounts),
+    //         )
+    //       } else {
+    //         console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
+    //       }
+    //     }
+    //   }),
+    // )
 
     this.registerEvent(
       this.app.vault.on('modify', async (file: TFile) => {
