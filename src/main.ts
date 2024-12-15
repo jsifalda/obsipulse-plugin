@@ -10,6 +10,7 @@ import {
   debounce,
   requestUrl,
 } from 'obsidian'
+import { DataviewCompiler } from './compilers/DataViewCompiler'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
 import { Encryption } from './helpers/Encryption'
 import { formatDateToYYYYMMDD } from './helpers/formatDateToYYYYMMDD'
@@ -256,11 +257,16 @@ export default class ObsiPulse extends Plugin {
         //   this.settings.publicPaths,
         //   this.settings.publicPaths.includes(file.path),
         // )
+
         if (this.settings.publicPaths.includes(file.path)) {
+          const dataviewCompiler = new DataviewCompiler()
           const fileContent = await this.app.vault.read(file)
-          // const hash = md5(file.path)
+          console.time('compile')
+          const compiledFile = await dataviewCompiler.compile(file)(fileContent)
+          console.timeEnd('compile')
+
           const hash = encodeURIComponent(file.path)
-          const toSync = { stat: file.stat, content: fileContent, path: file.path }
+          const toSync = { stat: file.stat, content: compiledFile, path: file.path }
           // console.log('---filesToSync---', file.path, hash, toSync)
           this.updateDb(
             `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/files/${hash}`,
