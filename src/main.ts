@@ -123,14 +123,6 @@ export default class ObsiPulse extends Plugin {
 
     await this.loadSettings()
 
-    // const key = Encryption().encrypt(
-    //   JSON.stringify({ key: 'pipX0t3I12V47y7wXVbIH4X42A84nB', userId: '9Sd3j0JMV0I4VtRt' }),
-    // )
-    // console.log({ key, l: key.length })
-    // const testKey = Encryption().decrypt(key)
-    // console.log({ testKey })
-    // parseLicenseKey(key)
-
     if (this.settings.key) {
       try {
         const parsedKey = parseLicenseKey(this.settings.key)
