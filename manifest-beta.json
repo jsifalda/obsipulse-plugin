@@ -1,10 +1,10 @@
 {
   "id": "obsipulse",
-  "name": "ObsiPulse - Stats Export & Public Profile",
-  "version": "1.6.0",
-  "minAppVersion": "0.10.12",
-  "description": "Track your daily word count across all notes in your vault.",
-  "author": "jsifalda",
+  "name": "ObsiPulse - Your Writing Activity Visualised",
+  "version": "1.10.0",
+  "minAppVersion": "0.15.0",
+  "description": "It's like your Github profile, but for Obsidian (featuring daily streak, average daily word count, comprehensive stats and plugins overview).",
+  "author": "Jiri Sifalda (@jsifalda)",
   "authorUrl": "https://github.com/jsifalda",
   "isDesktopOnly": false
 }
