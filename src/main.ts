@@ -120,14 +120,6 @@ export default class ObsiPulse extends Plugin {
 
   async onload() {
     console.log('ObsiPulse Plugin Loaded, v:', this.manifest.version)
-    // console.log({
-    //   dir: this.app.vault.configDir,
-    //   root: this.app.vault.getRoot(),
-    //   dirname: __dirname,
-    //   name: this.app.vault.adapter.getName(),
-    //   path: this.app.vault.adapter.basePath,
-    //   id: this.app.appId,
-    // })
 
     await this.loadSettings()
 
@@ -208,8 +200,8 @@ export default class ObsiPulse extends Plugin {
     }
 
     this.addCommand({
-      id: 'open-obsipulse',
-      name: 'Open ObsiPulse Profile',
+      id: 'obsipulse-open-profile',
+      name: 'Open My ObsiPulse Public Profile',
       callback: () => {
         this.openObsiPulseProfile()
       },
@@ -334,9 +326,7 @@ export default class ObsiPulse extends Plugin {
   }
 
   updateWordCount(contents: string, filepath: string) {
-    // console.time('wordCount')
     const curr = this.getWordCount(contents)
-    // console.timeEnd('wordCount')
 
     if (this.settings.dayCounts.hasOwnProperty(this.today)) {
       if (this.settings.todaysWordCount.hasOwnProperty(filepath)) {
