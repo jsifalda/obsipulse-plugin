@@ -93,12 +93,11 @@ interface ParsedLicenseKey {
 }
 
 const parseLicenseKey = (key: string) => {
-  // console.log('--parsing key', key)
   const parsedKey = Encryption().decrypt(key)
-  // console.log({ parsedKey })
+
   try {
     const value = JSON.parse(parsedKey) as ParsedLicenseKey
-    console.log({ value })
+    // console.log({ value })
     return value
   } catch (e) {
     console.error('--error decrypting key', e)
@@ -210,9 +209,10 @@ export default class ObsiPulse extends Plugin {
               `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
               JSON.stringify(this.settings.dayCounts),
             )
-          } else {
-            console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
           }
+          // else {
+          //   console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
+          // }
         }
       }),
     )
@@ -251,7 +251,6 @@ export default class ObsiPulse extends Plugin {
 
           const hash = encodeURIComponent(file.path)
           const toSync = { stat: file.stat, content: compiledFile, path: file.path }
-          // console.log('---filesToSync---', file.path, hash, toSync)
           this.updateDb(
             `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/files/${hash}`,
             JSON.stringify(toSync),
@@ -276,7 +275,6 @@ export default class ObsiPulse extends Plugin {
   updatePluginList() {
     if (this.settings.userId) {
       const plugins = listAllPlugins(this.app)
-      // console.log('---updating plugin list', plugins.length)
       this.updateDb(
         `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/plugins`,
         JSON.stringify(plugins),
@@ -313,7 +311,6 @@ export default class ObsiPulse extends Plugin {
         }
       }
     }
-    // console.log('text----', text, words, text?.length)
     return words
   }
 
@@ -346,7 +343,7 @@ export default class ObsiPulse extends Plugin {
       .reduce((a, b) => a + b, 0)
     this.settings.dayCounts[this.today] = this.currentWordCount
 
-    console.log('---word count updated', this.currentWordCount, this.settings.dayCounts, this.settings)
+    // console.log('---word count updated', this.currentWordCount, this.settings.dayCounts, this.settings)
 
     this.hasCountChanged = true
   }
@@ -379,21 +376,22 @@ export default class ObsiPulse extends Plugin {
   }
 
   async updateDb(key: string, value: any) {
-    // console.log('---calling update db')
     const body = JSON.stringify({ key, value })
 
-    return requestUrl({
-      method: 'POST',
-      url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
-      headers: {
-        'content-type': 'application/json',
-      },
-      body,
-    })
-      .then((result) => {
-        console.log('--db update done', result?.status, { key, value })
+    return (
+      requestUrl({
+        method: 'POST',
+        url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
+        headers: {
+          'content-type': 'application/json',
+        },
+        body,
       })
-      .catch(console.error)
+        // .then((result) => {
+        //   console.log('--db update done', result?.status, { key, value })
+        // })
+        .catch(console.error)
+    )
   }
 
   async loadSettings() {
