@@ -192,7 +192,7 @@ export default class ObsiPulse extends Plugin {
 
     this.addCommand({
       id: 'obsipulse-open-profile',
-      name: 'Open My ObsiPulse Public Profile',
+      name: 'Open Public Profile',
       callback: () => {
         this.openObsiPulseProfile()
       },

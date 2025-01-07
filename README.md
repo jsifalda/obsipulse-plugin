@@ -20,7 +20,7 @@ More details available on [Obsipulse.com](https://obsipulse.com).
 
 - Install the plguin from Obsidian's community plugins (or via BRAT).
 - Write notes as you normally would.
-- Run command `Open My ObsiPulse Public Profile` and your ObsiPulse public profile will open in your browser.
+- Run command `Open Public Profile` and your ObsiPulse public profile will open in your browser.
 
 > Example of a public profile: [https://www.obsipulse.com/app/profile/0b3417c00370b98c](https://www.obsipulse.com/app/profile/0b3417c00370b98c)
 
