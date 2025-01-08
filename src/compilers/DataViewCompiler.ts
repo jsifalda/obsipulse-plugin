@@ -1,7 +1,5 @@
 import { Component, Notice, TFile } from 'obsidian'
-// import { TCompilerStep } from './GardenPageCompiler'
-// import { escapeRegExp } from '../utils/utils'
-import { DataviewApi, getAPI } from 'obsidian-dataview'
+import { getAPI } from 'obsidian-dataview'
 
 // TODO: add proper type TFile is not the correct
 type PublishFile = TFile
