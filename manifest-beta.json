@@ -1,7 +1,7 @@
 {
   "id": "obsipulse",
   "name": "ObsiPulse - Your Writing Activity Visualised",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "minAppVersion": "0.15.0",
   "description": "It's like your Github profile, but for Obsidia... (featuring daily streak, average daily word count, comprehensive stats and plugins overview).",
   "author": "Jiri Sifalda (@jsifalda)",
