@@ -39,6 +39,22 @@ Run `yarn run dev` to start the development server
 
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
 
+## Contact
+
+- **Author**: Jiri Sifalda
+- **GitHub**: [@jsifalda](https://github.com/jsifalda)
+
+## FAQ
+
+- **How secure is my data with ObsiPulse?**
+  - We take your privacy seriously. No personal data from your vault is shared with us (it stays in your vault), plugin only collects your anonymised behavioural data points - such as the number of words written.
+- **Can I use ObsiPulse offline?**
+  - Yes, all features work offline, with sync occurring when you‘re back online.
+- **What network requests and why this plugin does?**
+  - ObsiPulse Plugins makes API calls to store meta data of your writing activity and the list of plugins you use. Nothing else, no third party tracking or analysis. **We don't send your note content anywhere without your permission!**
+- **Will ObsiPulse work with multiple Obsidian vaults?**
+  - Yes, ObsiPulse supports tracking across multiple vaults seamlessly.
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
@@ -47,11 +63,6 @@ This project is licensed under the MIT License. See the [LICENSE](./LICENSE) fil
 
 - Developed by [@jsifalda](https://dub.sh/I5tFaqk)
 - Inspired by lukeleppan's [Better Word Count](https://github.com/lukeleppan/better-word-count).
-
-## Contact
-
-- **Author**: Jiri Sifalda
-- **GitHub**: [@jsifalda](https://github.com/jsifalda)
 
 ---
 
