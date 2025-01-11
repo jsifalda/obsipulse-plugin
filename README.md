@@ -43,7 +43,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 - **Author**: Jiri Sifalda
 - **X (Twitter)**: [@jsifalda](https://dub.sh/kWUczm4)
-- **Bluesky**: [https://bsky.app/profile/jsifalda.bsky.social?ref=obsipulse-github](https://dub.sh/OjV5UtC)
+- **Bluesky**: [https://bsky.app/profile/jsifalda.bsky.social](https://dub.sh/OjV5UtC)
 - **Author Web**: [https://craftengineer.com/](https://dub.sh/2aGWsiT)
 - **Project Web**: [https://obsipulse.com](https://dub.sh/RSzQwoG)
 
