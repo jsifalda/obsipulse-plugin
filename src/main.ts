@@ -30,7 +30,7 @@ class ObsiPulseSettingTab extends PluginSettingTab {
     containerEl.createEl('span', { text: `Version: ${this.plugin.manifest.version}` })
 
     new Setting(containerEl)
-      .setName('License Key')
+      .setName('License key')
       .setDesc('Enter your license key to activate ObsiPulse plugin')
       .addText((text) =>
         text
@@ -188,7 +188,7 @@ export default class ObsiPulse extends Plugin {
 
     this.addCommand({
       id: 'obsipulse-open-profile',
-      name: 'Open Public Profile',
+      name: 'Open public profile',
       callback: () => {
         this.openObsiPulseProfile()
       },
