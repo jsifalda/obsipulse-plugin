@@ -27,10 +27,6 @@ class ObsiPulseSettingTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this
 
-    containerEl.empty()
-    containerEl.createEl('h2', { text: 'ObsiPulse Settings' })
-    containerEl.createEl('strong', { text: `Vault name: ${this.app.vault.adapter.getName()}` })
-    containerEl.createEl('br')
     containerEl.createEl('span', { text: `Version: ${this.plugin.manifest.version}` })
 
     new Setting(containerEl)
