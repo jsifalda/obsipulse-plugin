@@ -81,7 +81,8 @@ export class DataviewCompiler {
         let counter = 0
 
         while (!div.querySelector('[data-tag-name]') && counter < 100) {
-          await delay(5)
+          await sleep(5)
+
           counter++
         }
 
@@ -239,10 +240,3 @@ export class DataviewCompiler {
 // // TODO: fix this for automatic obsidian plugin scan bot: https://github.com/obsidianmd/obsidian-releases/pull/5094#issuecomment-2576678155
 //   return div.innerHTML
 // }
-
-//delay async function
-function delay(milliseconds: number) {
-  return new Promise((resolve, _) => {
-    setTimeout(resolve, milliseconds)
-  })
-}
