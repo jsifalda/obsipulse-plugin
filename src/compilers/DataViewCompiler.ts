@@ -1,5 +1,5 @@
 import { Component, Notice, TFile } from 'obsidian'
-import { getAPI } from 'obsidian-dataview'
+import { getAPI, DataviewApi } from 'obsidian-dataview'
 
 // TODO: add proper type TFile is not the correct
 type PublishFile = TFile
@@ -86,7 +86,7 @@ export class DataviewCompiler {
           counter++
         }
 
-        replacedText = replacedText.replace(block, div.innerHTML ?? '')
+        replacedText = replacedText.replace(block, div.getHTML() ?? '')
       } catch (e) {
         console.log(e)
 
@@ -122,34 +122,34 @@ export class DataviewCompiler {
       }
     }
 
-    // for (const inlineJsQuery of inlineJsMatches) {
-    //   try {
-    //     const code = inlineJsQuery[0]
-    //     const query = inlineJsQuery[1]
+    for (const inlineJsQuery of inlineJsMatches) {
+      try {
+        const code = inlineJsQuery[0]
+        const query = inlineJsQuery[1]
 
-    //     let result: string | undefined | null = ''
+        let result: string | undefined | null = ''
 
-    //     result = tryDVEvaluate(query, file, dvApi)
+        result = tryDVEvaluate(query, file, dvApi)
 
-    //     if (!result) {
-    //       result = tryEval(query)
-    //     }
+        if (!result) {
+          result = tryEval(query)
+        }
 
-    //     if (!result) {
-    //       result = await tryExecuteJs(query, file, dvApi)
-    //     }
+        if (!result) {
+          result = await tryExecuteJs(query, file, dvApi)
+        }
 
-    //     replacedText = replacedText.replace(code, result ?? 'Unable to render query')
-    //   } catch (e) {
-    //     console.error(e)
+        replacedText = replacedText.replace(code, result ?? 'Unable to render query')
+      } catch (e) {
+        console.error(e)
 
-    //     new Notice(
-    //       'Unable to render inline dataviewjs query. Please update the dataview plugin to the latest version.',
-    //     )
+        new Notice(
+          'Unable to render inline dataviewjs query. Please update the dataview plugin to the latest version.',
+        )
 
-    //     return inlineJsQuery[0]
-    //   }
-    // }
+        return inlineJsQuery[0]
+      }
+    }
 
     return replacedText
   }
@@ -199,44 +199,44 @@ export class DataviewCompiler {
   }
 }
 
-// function tryDVEvaluate(query: string, file: PublishFile, dvApi: DataviewApi): string | undefined | null {
-//   let result = ''
+function tryDVEvaluate(query: string, file: PublishFile, dvApi: DataviewApi): string | undefined | null {
+  let result = ''
 
-//   try {
-//     const dataviewResult = dvApi.tryEvaluate(query.trim(), {
-//       this: dvApi.page(file.path) ?? {},
-//     })
-//     result = dataviewResult?.toString() ?? ''
-//   } catch (e) {
-//     console.warn('dvapi.tryEvaluate did not yield any result', e)
-//   }
+  try {
+    const dataviewResult = dvApi.tryEvaluate(query.trim(), {
+      this: dvApi.page(file.path) ?? {},
+    })
+    result = dataviewResult?.toString() ?? ''
+  } catch (e) {
+    console.warn('dvapi.tryEvaluate did not yield any result', e)
+  }
 
-//   return result
-// }
+  return result
+}
 
-// function tryEval(query: string) {
-//   let result = ''
+function tryEval(query: string) {
+  let result = ''
 
-//   try {
-//     result = (0, eval)('const dv = DataviewAPI;' + query) //https://esbuild.github.io/content-types/#direct-eval
-//   } catch (e) {
-//     console.warn('eval did not yield any result', e)
-//   }
+  try {
+    result = (0, eval)('const dv = DataviewAPI;' + query) //https://esbuild.github.io/content-types/#direct-eval
+  } catch (e) {
+    console.warn('eval did not yield any result', e)
+  }
 
-//   return result
-// }
+  return result
+}
 
-// async function tryExecuteJs(query: string, file: PublishFile, dvApi: DataviewApi) {
-//   const div = createEl('div')
-//   const component = new Component()
-//   component.load()
-//   await dvApi.executeJs(query, div, component, file.path)
-//   let counter = 0
+async function tryExecuteJs(query: string, file: PublishFile, dvApi: DataviewApi) {
+  const div = createEl('div')
+  const component = new Component()
+  component.load()
+  await dvApi.executeJs(query, div, component, file.path)
+  let counter = 0
 
-//   while (!div.querySelector('[data-tag-name]') && counter < 50) {
-//     await delay(5)
-//     counter++
-//   }
-// // TODO: fix this for automatic obsidian plugin scan bot: https://github.com/obsidianmd/obsidian-releases/pull/5094#issuecomment-2576678155
-//   return div.innerHTML
-// }
+  while (!div.querySelector('[data-tag-name]') && counter < 50) {
+    await sleep(5)
+    counter++
+  }
+
+  return div.getHTML()
+}
