@@ -48,7 +48,7 @@ class ObsiPulseSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Files to be published')
-      .setDesc('List of files to be shared publicly via obsidian profile')
+      .setDesc('List of files to be shared publicly via ObsiPulse.com profile (one per line)')
       .addTextArea((textArea) =>
         textArea
           .setPlaceholder('public-path.md\n/public-dir\n!/public-dir/not-public-path.md')
