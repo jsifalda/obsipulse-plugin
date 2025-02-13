@@ -16,10 +16,10 @@ import { Encryption } from './helpers/Encryption'
 import { formatDateToYYYYMMDD } from './helpers/formatDateToYYYYMMDD'
 import { listAllPlugins } from './helpers/listAllPlugins'
 
-class ObsiPulseSettingTab extends PluginSettingTab {
-  plugin: ObsiPulse
+class YourPulseSettingTab extends PluginSettingTab {
+  plugin: YourPulse
 
-  constructor(app: App, plugin: ObsiPulse) {
+  constructor(app: App, plugin: YourPulse) {
     super(app, plugin)
     this.plugin = plugin
   }
@@ -31,7 +31,7 @@ class ObsiPulseSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('License key')
-      .setDesc('Enter your license key to activate ObsiPulse plugin')
+      .setDesc('Enter your license key to activate YourPulse plugin')
       .addText((text) =>
         text
           .setPlaceholder('Your license key here...')
@@ -48,7 +48,7 @@ class ObsiPulseSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Files to be published')
-      .setDesc('List of files to be shared publicly via ObsiPulse.com profile (one per line)')
+      .setDesc('List of files to be shared publicly via YourPulse.com profile (one per line)')
       .addTextArea((textArea) =>
         textArea
           .setPlaceholder('public-path.md\n/public-dir\n!/public-dir/not-public-path.md')
@@ -66,7 +66,7 @@ interface WordCount {
   current: number
 }
 
-interface ObsiPulseSettings {
+interface YourPulseSettings {
   dayCounts: Record<string, number>
   todaysWordCount: Record<string, WordCount>
 
@@ -76,7 +76,7 @@ interface ObsiPulseSettings {
   publicPaths?: string[]
 }
 
-const DEFAULT_SETTINGS: ObsiPulseSettings = {
+const DEFAULT_SETTINGS: YourPulseSettings = {
   dayCounts: {},
   todaysWordCount: {},
   userId: null,
@@ -100,8 +100,8 @@ const parseLicenseKey = (key: string) => {
   }
 }
 
-export default class ObsiPulse extends Plugin {
-  settings: ObsiPulseSettings
+export default class YourPulse extends Plugin {
+  settings: YourPulseSettings
   statusBarEl: HTMLElement
   currentWordCount: number
   today: string
@@ -114,7 +114,7 @@ export default class ObsiPulse extends Plugin {
   private previousPlugins: Set<string> = new Set()
 
   async onload() {
-    console.log('ObsiPulse Plugin Loaded, v:', this.manifest.version)
+    console.log('YourPulse Plugin Loaded, v:', this.manifest.version)
 
     await this.loadSettings()
 
@@ -125,10 +125,10 @@ export default class ObsiPulse extends Plugin {
         this.updatePluginList()
       } catch (e) {
         console.error('--error parsing key', e, this.settings.key)
-        new Notice('Invalid licence key for ObsiPulse plugin')
+        new Notice('Invalid licence key for YourPulse plugin')
       }
     } else {
-      new Notice('Missing licence key for ObsiPulse plugin')
+      new Notice('Missing licence key for YourPulse plugin')
     }
 
     this.statusBarEl = this.addStatusBarItem()
@@ -157,11 +157,11 @@ export default class ObsiPulse extends Plugin {
         if (this.settings.userId) {
           this.statusBarEl.setText(this.currentWordCount + ' words today ')
           this.statusBarEl.onclick = () => {
-            this.openObsiPulseProfile()
+            this.openYourPulseProfile()
           }
           this.statusBarEl.setAttribute('style', 'cursor: pointer')
         } else {
-          this.statusBarEl.setText('No License Key for ObsiPulse')
+          this.statusBarEl.setText('No License Key for YourPulse')
           this.statusBarEl.setAttribute('style', 'color: red')
         }
       }, 2000),
@@ -190,11 +190,11 @@ export default class ObsiPulse extends Plugin {
       id: 'obsipulse-open-profile',
       name: 'Open public profile',
       callback: () => {
-        this.openObsiPulseProfile()
+        this.openYourPulseProfile()
       },
     })
 
-    this.addSettingTab(new ObsiPulseSettingTab(this.app, this))
+    this.addSettingTab(new YourPulseSettingTab(this.app, this))
 
     this.registerEvent(
       this.app.workspace.on('file-open', (file: TFile) => {
@@ -231,12 +231,12 @@ export default class ObsiPulse extends Plugin {
 
     this.registerEvent(
       this.app.vault.on('modify', async (file: TFile) => {
-        // console.log(
-        //   '--file',
-        //   file.path,
-        //   this.settings.publicPaths,
-        //   this.settings.publicPaths.includes(file.path),
-        // )
+        console.log(
+          '--file',
+          file.path,
+          this.settings.publicPaths,
+          this.settings.publicPaths.includes(file.path),
+        )
 
         if (this.settings.publicPaths.includes(file.path)) {
           const dataviewCompiler = new DataviewCompiler()
@@ -257,12 +257,12 @@ export default class ObsiPulse extends Plugin {
   }
 
   onunload(): void {
-    console.log('--ObsiPulse Plugin Unloaded')
+    console.log('--YourPulse Plugin Unloaded')
   }
 
-  openObsiPulseProfile() {
+  openYourPulseProfile() {
     if (!this.settings.userId) {
-      return new Notice('Missing licence key for ObsiPulse plugin')
+      return new Notice('Missing licence key for YourPulse plugin')
     }
 
     window.open(`https://www.obsipulse.com/app/profile/${this.settings.userId}`, '_blank')

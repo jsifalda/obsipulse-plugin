@@ -1,8 +1,8 @@
-# ObsiPulse - Your Writing Activity Visualised
+# YourPulse - Your Writing Activity Visualised
 
 ## Overview
 
-ObsiPulse is a plugin for [Obsidian](https://obsidian.md) that allows users to track their daily word count across all notes in their vault. It provides a visual representation of your writing activity, similar to GitHub's contribution graph, and offers a public profile feature for sharing selected notes.
+YourPulse is a plugin for [Obsidian](https://obsidian.md) that allows users to track their daily word count across all notes in their vault. It provides a visual representation of your writing activity, similar to GitHub's contribution graph, and offers a public profile feature for sharing selected notes.
 More details available on [Obsipulse.com](https://obsipulse.com).
 
 ![Example](./obsipulse.png)
@@ -13,14 +13,14 @@ More details available on [Obsipulse.com](https://obsipulse.com).
 - Gain valuable insights into your writing habits.
 - Share Your Progress with a free public profile URL to share your writing journey with friends or colleagues.
 - Never answer the question "What Obsidian plugins do you use?" → it‘s all on your profile.
-- Upload selected notes to your public ObsiPulse profile (with support of Dataview rendering).
+- Upload selected notes to your public YourPulse profile (with support of Dataview rendering).
 - Seamlessly manage insights across multiple vaults.
 
 ## Usage
 
 - Install the plguin from Obsidian's community plugins (or via BRAT).
 - Write notes as you normally would.
-- Run command `Open Public Profile` and your ObsiPulse public profile will open in your browser.
+- Run command `Open Public Profile` and your YourPulse public profile will open in your browser.
 
 > Example of a public profile: [https://www.obsipulse.com/app/profile/0b3417c00370b98c](https://www.obsipulse.com/app/profile/0b3417c00370b98c)
 
@@ -49,14 +49,14 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## FAQ
 
-- **How secure is my data with ObsiPulse?**
+- **How secure is my data with YourPulse?**
   - We take your privacy seriously. No personal data from your vault is shared with us (it stays in your vault), plugin only collects your anonymised behavioural data points - such as the number of words written.
-- **Can I use ObsiPulse offline?**
+- **Can I use YourPulse offline?**
   - Yes, all features work offline, with sync occurring when you‘re back online.
 - **What network requests and why this plugin does?**
-  - ObsiPulse Plugins makes API calls to store meta data of your writing activity and the list of plugins you use. Nothing else, no third party tracking or analysis. **We don't send your note content anywhere without your permission!**
-- **Will ObsiPulse work with multiple Obsidian vaults?**
-  - Yes, ObsiPulse supports tracking across multiple vaults seamlessly.
+  - YourPulse Plugins makes API calls to store meta data of your writing activity and the list of plugins you use. Nothing else, no third party tracking or analysis. **We don't send your note content anywhere without your permission!**
+- **Will YourPulse work with multiple Obsidian vaults?**
+  - Yes, YourPulse supports tracking across multiple vaults seamlessly.
 
 ## License
 
