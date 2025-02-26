@@ -26,6 +26,7 @@ class YourPulseSettingTab extends PluginSettingTab {
 
   display(): void {
     const { containerEl } = this
+    containerEl.empty()
 
     containerEl.createEl('span', { text: `Version: ${this.plugin.manifest.version}` })
 
