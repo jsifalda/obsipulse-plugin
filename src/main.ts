@@ -10,6 +10,8 @@ import {
   debounce,
   requestUrl,
 } from 'obsidian'
+import { v4 as uuidv4 } from 'uuid'
+
 import { DataviewCompiler } from './compilers/DataViewCompiler'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
 import { Encryption } from './helpers/Encryption'
@@ -28,11 +30,9 @@ class YourPulseSettingTab extends PluginSettingTab {
     const { containerEl } = this
     containerEl.empty()
 
-    containerEl.createEl('span', { text: `Version: ${this.plugin.manifest.version}` })
-
     new Setting(containerEl)
       .setName('License key')
-      .setDesc('Enter your license key to activate YourPulse plugin')
+      .setDesc('Enter your licence key to access PRO features')
       .addText((text) =>
         text
           .setPlaceholder('Your license key here...')
@@ -59,6 +59,9 @@ class YourPulseSettingTab extends PluginSettingTab {
             await this.plugin.saveData(this.plugin.settings)
           }),
       )
+
+    new Setting(containerEl).setName('Version').setDesc(this.plugin.manifest.version)
+    new Setting(containerEl).setName('User ID').setDesc(this.plugin.settings.userId)
   }
 }
 
@@ -80,7 +83,7 @@ interface YourPulseSettings {
 const DEFAULT_SETTINGS: YourPulseSettings = {
   dayCounts: {},
   todaysWordCount: {},
-  userId: null,
+  userId: uuidv4(),
   publicPaths: [],
 }
 
@@ -123,7 +126,6 @@ export default class YourPulse extends Plugin {
       try {
         const parsedKey = parseLicenseKey(this.settings.key)
         this.settings.userId = parsedKey.userId
-        this.updatePluginList()
       } catch (e) {
         console.error('--error parsing key', e, this.settings.key)
         new Notice('Invalid licence key for YourPulse plugin')
@@ -132,6 +134,7 @@ export default class YourPulse extends Plugin {
       new Notice('Missing licence key for YourPulse plugin')
     }
 
+    this.updatePluginList()
     this.statusBarEl = this.addStatusBarItem()
     this.updateDate()
     this.previousPlugins = new Set(this.app.plugins.enabledPlugins)
@@ -161,7 +164,9 @@ export default class YourPulse extends Plugin {
             this.openYourPulseProfile()
           }
           this.statusBarEl.setAttribute('style', 'cursor: pointer')
-        } else {
+        }
+
+        if (!this.settings.key) {
           this.statusBarEl.setText('No License Key for YourPulse')
           this.statusBarEl.setAttribute('style', 'color: red')
         }
@@ -232,12 +237,12 @@ export default class YourPulse extends Plugin {
 
     this.registerEvent(
       this.app.vault.on('modify', async (file: TFile) => {
-        console.log(
-          '--file',
-          file.path,
-          this.settings.publicPaths,
-          this.settings.publicPaths.includes(file.path),
-        )
+        // console.log(
+        //   '--file',
+        //   file.path,
+        //   this.settings.publicPaths,
+        //   this.settings.publicPaths.includes(file.path),
+        // )
 
         if (this.settings.publicPaths.includes(file.path)) {
           const dataviewCompiler = new DataviewCompiler()
@@ -262,9 +267,9 @@ export default class YourPulse extends Plugin {
   }
 
   openYourPulseProfile() {
-    if (!this.settings.userId) {
-      return new Notice('Missing licence key for YourPulse plugin')
-    }
+    // if (!this.settings.key) {
+    //   return new Notice('Missing licence key for YourPulse plugin')
+    // }
 
     window.open(`https://www.obsipulse.com/app/profile/${this.settings.userId}`, '_blank')
   }

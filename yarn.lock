@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@codemirror/language@git+https://github.com/lishid/cm-language.git":
-  version "6.10.3"
-  resolved "git+https://github.com/lishid/cm-language.git#be84c19d93fa87ac4e43c1a5874b1d228b5b2a89"
+"@codemirror/language@https://github.com/lishid/cm-language":
+  version "6.10.8"
+  resolved "https://github.com/lishid/cm-language#6c1c5f5b677f6f6503d1ca2ec47f62f6406cda67"
   dependencies:
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.23.0"
@@ -718,16 +718,16 @@ obsidian-dataview@^0.5.67:
     parsimmon "^1.18.0"
     preact "^10.6.5"
 
-"obsidian@github:obsidianmd/obsidian-api#master":
+"obsidian@https://github.com/obsidianmd/obsidian-api/tarball/master":
   version "1.7.2"
-  resolved "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/23947b58d372ea02225324308e31d36b4aa95869"
+  resolved "https://github.com/obsidianmd/obsidian-api/tarball/master#4826f948a82197234297bf2357b18754c38327ea"
   dependencies:
     "@types/codemirror" "5.60.8"
     moment "2.29.4"
 
-"obsidian@https://github.com/obsidianmd/obsidian-api/tarball/master":
-  version "1.7.2"
-  resolved "https://github.com/obsidianmd/obsidian-api/tarball/master#4826f948a82197234297bf2357b18754c38327ea"
+obsidian@obsidianmd/obsidian-api#master:
+  version "1.8.7"
+  resolved "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/9ab497e64afeac291a2546d2faeded6a7bed626a"
   dependencies:
     "@types/codemirror" "5.60.8"
     moment "2.29.4"
@@ -1277,6 +1277,11 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
+
+uuid@^11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
+  integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
 
 w3c-keyname@^2.2.4:
   version "2.2.8"
