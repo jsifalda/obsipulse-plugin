@@ -7,8 +7,10 @@ import {
   PluginSettingTab,
   Setting,
   TFile,
+  addIcon,
   debounce,
   requestUrl,
+  setIcon,
 } from 'obsidian'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -17,6 +19,8 @@ import { VIEW_TYPE_STATS_TRACKER } from './constants'
 import { Encryption } from './helpers/Encryption'
 import { formatDateToYYYYMMDD } from './helpers/formatDateToYYYYMMDD'
 import { listAllPlugins } from './helpers/listAllPlugins'
+import { ObsiPulseIcon } from './assets/ObsiPulseIcon'
+import { createProfileUrl } from './helpers/createProfileUrl'
 
 class YourPulseSettingTab extends PluginSettingTab {
   plugin: YourPulse
@@ -118,9 +122,15 @@ export default class YourPulse extends Plugin {
   private previousPlugins: Set<string> = new Set()
 
   async onload() {
-    console.log('YourPulse Plugin Loaded, v:', this.manifest.version)
+    console.log('YourPulse Plugin Loaded', this.manifest.version)
+
+    addIcon(ObsiPulseIcon.name, ObsiPulseIcon.hmtl)
 
     await this.loadSettings()
+
+    this.addRibbonIcon(ObsiPulseIcon.name, 'Open YourPulse Profile', () => {
+      this.openYourPulseProfile('obsidian-plugin-ribbon')
+    })
 
     if (this.settings.key) {
       try {
@@ -135,7 +145,9 @@ export default class YourPulse extends Plugin {
     }
 
     this.updatePluginList()
-    this.statusBarEl = this.addStatusBarItem()
+
+    this.initStatusBar()
+
     this.updateDate()
     this.previousPlugins = new Set(this.app.plugins.enabledPlugins)
 
@@ -155,23 +167,6 @@ export default class YourPulse extends Plugin {
     }
 
     this.registerEvent(this.app.workspace.on('quick-preview', this.onQuickPreview.bind(this)))
-
-    this.registerInterval(
-      window.setInterval(() => {
-        if (this.settings.userId) {
-          this.statusBarEl.setText(this.currentWordCount + ' words today ')
-          this.statusBarEl.onclick = () => {
-            this.openYourPulseProfile()
-          }
-          this.statusBarEl.setAttribute('style', 'cursor: pointer')
-        }
-
-        if (!this.settings.key) {
-          this.statusBarEl.setText('No License Key for YourPulse')
-          this.statusBarEl.setAttribute('style', 'color: red')
-        }
-      }, 2000),
-    )
 
     this.registerInterval(
       window.setInterval(() => {
@@ -196,7 +191,7 @@ export default class YourPulse extends Plugin {
       id: 'obsipulse-open-profile',
       name: 'Open public profile',
       callback: () => {
-        this.openYourPulseProfile()
+        this.openYourPulseProfile('obsidian-plugin-command')
       },
     })
 
@@ -266,12 +261,26 @@ export default class YourPulse extends Plugin {
     console.log('--YourPulse Plugin Unloaded')
   }
 
-  openYourPulseProfile() {
-    // if (!this.settings.key) {
-    //   return new Notice('Missing licence key for YourPulse plugin')
-    // }
+  initStatusBar() {
+    this.statusBarEl = this.addStatusBarItem()
+    this.statusBarEl.setAttribute('style', 'cursor: pointer')
 
-    window.open(`https://www.obsipulse.com/app/profile/${this.settings.userId}`, '_blank')
+    this.registerInterval(
+      window.setInterval(() => {
+        this.statusBarEl.innerHTML = ''
+
+        setIcon(this.statusBarEl, ObsiPulseIcon.name)
+        this.statusBarEl.onclick = () => {
+          this.openYourPulseProfile('obsidian-plugin-statusbar')
+        }
+
+        this.statusBarEl.appendText(`      ${this.currentWordCount || 0} words today `)
+      }, 4000),
+    )
+  }
+
+  openYourPulseProfile(ref: string) {
+    window.open(createProfileUrl(this.settings.userId, ref), '_blank')
   }
 
   updatePluginList() {
