@@ -3,7 +3,7 @@
 ## Overview
 
 YourPulse (formerly <u>ObsiPulse</u>) is a plugin for [Obsidian](https://obsidian.md) that allows users to track their daily word count across all notes in their vault. It provides a visual representation of your writing activity, similar to GitHub's contribution graph, and offers a public profile feature for sharing selected notes.
-More details available on [Obsipulse.com](https://obsipulse.com).
+More details available on [YourPulse.cc](https://yourpulse.cc).
 
 ![Example](./yourpulse.png)
 
@@ -22,7 +22,7 @@ More details available on [Obsipulse.com](https://obsipulse.com).
 - Write notes as you normally would.
 - Run command `Open Public Profile` and your YourPulse public profile will open in your browser.
 
-> Example of a public profile: [https://www.obsipulse.com/app/profile/0b3417c00370b98c](https://www.obsipulse.com/app/profile/0b3417c00370b98c)
+> Example of a public profile: [https://www.yourpulse.cc/app/profile/0b3417c00370b98c](https://www.yourpulse.cc/app/profile/0b3417c00370b98c)
 
 ## Configuration
 
@@ -45,7 +45,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 - **X (Twitter)**: [@jsifalda](https://dub.sh/kWUczm4)
 - **Bluesky**: [https://bsky.app/profile/jsifalda.bsky.social](https://dub.sh/OjV5UtC)
 - **Author Web**: [https://craftengineer.com/](https://dub.sh/2aGWsiT)
-- **Project Web**: [https://obsipulse.com](https://dub.sh/RSzQwoG)
+- **Project Web**: [https://yourpulse.cc](https://dub.sh/RSzQwoG)
 
 ## FAQ
 
