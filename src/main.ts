@@ -39,8 +39,6 @@ const getLeaderBoardUser = (
         // console.log('--leaderboad', result?.status)
         if (result?.status === 200) {
           const response = JSON.parse(JSON.stringify(result))?.json
-          console.log('--leaderboard response', response)
-          // const leaderboard = result.json()
           resolve(response.find((user: any) => user.userId === userId))
         } else {
           reject(new Error('Invalid status'))
