@@ -10,7 +10,6 @@ import {
   addIcon,
   debounce,
   requestUrl,
-  setIcon,
 } from 'obsidian'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -137,7 +136,7 @@ const parseLicenseKey = (key: string) => {
 export default class YourPulse extends Plugin {
   settings: YourPulseSettings
   statusBarEl: HTMLElement
-  statusBarElLeaderboard: HTMLElement
+  leaderboardPosition: number = 0
   currentWordCount: number
   today: string
   debouncedUpdate?: Debouncer<[contents: string, filepath: string], void>
@@ -291,14 +290,18 @@ export default class YourPulse extends Plugin {
   initStatusBar() {
     this.statusBarEl = this.addStatusBarItem()
     this.statusBarEl.setAttribute('style', 'cursor: pointer')
+    this.statusBarEl.setAttribute(
+      'title',
+      'Your daily leaderboard position among YourPulse users (Click to open YourPulse profile)',
+    )
     this.statusBarEl.onclick = () => {
       this.openYourPulseProfile('obsidian-plugin-statusbar')
     }
 
     const initDailyCount = () => {
-      this.statusBarEl.innerHTML = ''
-      setIcon(this.statusBarEl, ObsiPulseIcon.name)
-      this.statusBarEl.appendText(`      ${this.currentWordCount || 0} words today `)
+      this.statusBarEl.setText(
+        `YourPulse Rank: #${this.leaderboardPosition} (${this.currentWordCount || 0} words today)`,
+      )
     }
 
     this.registerInterval(
@@ -307,34 +310,23 @@ export default class YourPulse extends Plugin {
       }, 4000),
     )
 
-    initDailyCount()
-
-    this.statusBarElLeaderboard = this.addStatusBarItem()
-    this.statusBarElLeaderboard.setAttribute('title', 'Your daily leaderboard position among YourPulse users')
-    this.statusBarElLeaderboard.setAttribute('style', 'cursor: pointer')
-    this.statusBarElLeaderboard.onclick = () => {
-      this.openYourPulseProfile('obsidian-plugin-leaderboard')
-    }
-
     const initLeaderboard = () => {
-      this.statusBarEl.innerHTML = ''
-
       getLeaderBoardUser(this.settings.userId)
         .then((user) => {
           if (user) {
-            this.statusBarElLeaderboard.setText(`YourPulse Rank: #${user.ranking}`)
+            this.leaderboardPosition = user.ranking
           }
         })
         .catch(console.error)
     }
+
+    initLeaderboard()
 
     this.registerInterval(
       window.setInterval(() => {
         initLeaderboard()
       }, 60 * 1000 * 5), // 5 minutes
     )
-
-    initLeaderboard()
   }
 
   openYourPulseProfile(ref: string) {
