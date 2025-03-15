@@ -124,7 +124,7 @@ export default class YourPulse extends Plugin {
   async onload() {
     console.log('YourPulse Plugin Loaded', this.manifest.version)
 
-    addIcon(ObsiPulseIcon.name, ObsiPulseIcon.hmtl)
+    addIcon(ObsiPulseIcon.name, ObsiPulseIcon.html)
 
     await this.loadSettings()
 
