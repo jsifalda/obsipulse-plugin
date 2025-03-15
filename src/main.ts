@@ -14,13 +14,41 @@ import {
 } from 'obsidian'
 import { v4 as uuidv4 } from 'uuid'
 
+import { ObsiPulseIcon } from './assets/ObsiPulseIcon'
 import { DataviewCompiler } from './compilers/DataViewCompiler'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
+import { createProfileUrl } from './helpers/createProfileUrl'
 import { Encryption } from './helpers/Encryption'
 import { formatDateToYYYYMMDD } from './helpers/formatDateToYYYYMMDD'
 import { listAllPlugins } from './helpers/listAllPlugins'
-import { ObsiPulseIcon } from './assets/ObsiPulseIcon'
-import { createProfileUrl } from './helpers/createProfileUrl'
+
+const getTodayDate = () => new Date().toISOString().slice(0, 10)
+
+const getLeaderBoardUser = (
+  userId: string,
+): Promise<{ ranking: number; userId: string; vaults: { name: string; ranking: number }[] } | undefined> => {
+  return new Promise((resolve, reject) => {
+    requestUrl({
+      method: 'GET',
+      url: `https://www.yourpulse.cc/app/api/leaderboard?date=${getTodayDate()}`,
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+      .then((result) => {
+        // console.log('--leaderboad', result?.status)
+        if (result?.status === 200) {
+          const response = JSON.parse(JSON.stringify(result))?.json
+          console.log('--leaderboard response', response)
+          // const leaderboard = result.json()
+          resolve(response.find((user: any) => user.userId === userId))
+        } else {
+          reject(new Error('Invalid status'))
+        }
+      })
+      .catch(reject)
+  })
+}
 
 class YourPulseSettingTab extends PluginSettingTab {
   plugin: YourPulse
@@ -111,6 +139,7 @@ const parseLicenseKey = (key: string) => {
 export default class YourPulse extends Plugin {
   settings: YourPulseSettings
   statusBarEl: HTMLElement
+  statusBarElLeaderboard: HTMLElement
   currentWordCount: number
   today: string
   debouncedUpdate?: Debouncer<[contents: string, filepath: string], void>
@@ -264,19 +293,50 @@ export default class YourPulse extends Plugin {
   initStatusBar() {
     this.statusBarEl = this.addStatusBarItem()
     this.statusBarEl.setAttribute('style', 'cursor: pointer')
+    this.statusBarEl.onclick = () => {
+      this.openYourPulseProfile('obsidian-plugin-statusbar')
+    }
+
+    const initDailyCount = () => {
+      this.statusBarEl.innerHTML = ''
+      setIcon(this.statusBarEl, ObsiPulseIcon.name)
+      this.statusBarEl.appendText(`      ${this.currentWordCount || 0} words today `)
+    }
 
     this.registerInterval(
       window.setInterval(() => {
-        this.statusBarEl.innerHTML = ''
-
-        setIcon(this.statusBarEl, ObsiPulseIcon.name)
-        this.statusBarEl.onclick = () => {
-          this.openYourPulseProfile('obsidian-plugin-statusbar')
-        }
-
-        this.statusBarEl.appendText(`      ${this.currentWordCount || 0} words today `)
+        initDailyCount()
       }, 4000),
     )
+
+    initDailyCount()
+
+    this.statusBarElLeaderboard = this.addStatusBarItem()
+    this.statusBarElLeaderboard.setAttribute('title', 'Your daily leaderboard position among YourPulse users')
+    this.statusBarElLeaderboard.setAttribute('style', 'cursor: pointer')
+    this.statusBarElLeaderboard.onclick = () => {
+      this.openYourPulseProfile('obsidian-plugin-leaderboard')
+    }
+
+    const initLeaderboard = () => {
+      this.statusBarEl.innerHTML = ''
+
+      getLeaderBoardUser(this.settings.userId)
+        .then((user) => {
+          if (user) {
+            this.statusBarElLeaderboard.setText(`YourPulse Rank: #${user.ranking}`)
+          }
+        })
+        .catch(console.error)
+    }
+
+    this.registerInterval(
+      window.setInterval(() => {
+        initLeaderboard()
+      }, 60 * 1000 * 5), // 5 minutes
+    )
+
+    initLeaderboard()
   }
 
   openYourPulseProfile(ref: string) {
