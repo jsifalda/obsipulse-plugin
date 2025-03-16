@@ -166,9 +166,10 @@ export default class YourPulse extends Plugin {
         console.error('--error parsing key', e, this.settings.key)
         new Notice('Invalid licence key for YourPulse plugin')
       }
-    } else {
-      new Notice('Missing licence key for YourPulse plugin')
     }
+    // else {
+    //   new Notice('Missing licence key for YourPulse plugin')
+    // }
 
     this.updatePluginList()
 
