@@ -35,10 +35,9 @@ const getLeaderBoardUser = (
       },
     })
       .then((result) => {
-        // console.log('--leaderboad', result?.status)
         if (result?.status === 200) {
           const response = JSON.parse(JSON.stringify(result))?.json
-          resolve(response.find((user: any) => user.userId === userId))
+          resolve(response?.rankings.find((user: any) => user.userId === userId))
         } else {
           reject(new Error('Invalid status'))
         }
