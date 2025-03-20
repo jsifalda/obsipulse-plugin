@@ -25,7 +25,10 @@ const getTodayDate = () => new Date().toISOString().slice(0, 10)
 
 const getLeaderBoardUser = (
   userId: string,
-): Promise<{ ranking: number; userId: string; vaults: { name: string; ranking: number }[] } | undefined> => {
+): Promise<{
+  user: { ranking: number; userId: string; vaults: { name: string; ranking: number }[] } | undefined
+  totalCount: number
+}> => {
   return new Promise((resolve, reject) => {
     requestUrl({
       method: 'GET',
@@ -37,7 +40,10 @@ const getLeaderBoardUser = (
       .then((result) => {
         if (result?.status === 200) {
           const response = JSON.parse(JSON.stringify(result))?.json
-          resolve(response?.rankings.find((user: any) => user.userId === userId))
+          resolve({
+            user: response?.rankings.find((user: any) => user.userId === userId),
+            totalCount: response?.rankings?.length || 0,
+          })
         } else {
           reject(new Error('Invalid status'))
         }
@@ -135,7 +141,7 @@ const parseLicenseKey = (key: string) => {
 export default class YourPulse extends Plugin {
   settings: YourPulseSettings
   statusBarEl: HTMLElement
-  leaderboardPosition: number = 0
+  leaderboardPosition = ''
   currentWordCount: number
   today: string
   debouncedUpdate?: Debouncer<[contents: string, filepath: string], void>
@@ -312,9 +318,9 @@ export default class YourPulse extends Plugin {
 
     const initLeaderboard = () => {
       getLeaderBoardUser(this.settings.userId)
-        .then((user) => {
+        .then(({ totalCount, user }) => {
           if (user) {
-            this.leaderboardPosition = user.ranking
+            this.leaderboardPosition = `${user.ranking} / ${totalCount}`
           }
         })
         .catch(console.error)
