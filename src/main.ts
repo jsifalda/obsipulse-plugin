@@ -66,7 +66,7 @@ class YourPulseSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('License key')
-      .setDesc('Enter your licence key to access PRO features')
+      .setDesc('Enter your license key to access PRO features')
       .addText((text) =>
         text
           .setPlaceholder('Your license key here...')
@@ -96,6 +96,28 @@ class YourPulseSettingTab extends PluginSettingTab {
 
     new Setting(containerEl).setName('Version').setDesc(this.plugin.manifest.version)
     new Setting(containerEl).setName('User ID').setDesc(this.plugin.settings.userId)
+
+    new Setting(containerEl)
+      .setName('Contact Me')
+      .setDesc(
+        'If you have any questions regarding this plugin, please contact me directly on x.com, or open an issue on GitHub',
+      )
+      .addButton((button) => {
+        button
+          .setButtonText('Contact Me on X')
+          .setCta()
+          .onClick(() => {
+            window.open('https://jsifalda.link/ZfxF9yv', '_blank')
+          })
+      })
+      .addButton((button) => {
+        button
+          .setButtonText('Open Github')
+          .setCta()
+          .onClick(() => {
+            window.open('https://jsifalda.link/VGTiZNX', '_blank')
+          })
+      })
   }
 }
 
@@ -169,11 +191,11 @@ export default class YourPulse extends Plugin {
         this.settings.userId = parsedKey.userId
       } catch (e) {
         console.error('--error parsing key', e, this.settings.key)
-        new Notice('Invalid licence key for YourPulse plugin')
+        new Notice('Invalid license key for YourPulse plugin')
       }
     }
     // else {
-    //   new Notice('Missing licence key for YourPulse plugin')
+    //   new Notice('Missing license key for YourPulse plugin')
     // }
 
     this.updatePluginList()
