@@ -318,10 +318,7 @@ export default class YourPulse extends Plugin {
   initStatusBar() {
     this.statusBarEl = this.addStatusBarItem()
     this.statusBarEl.setAttribute('style', 'cursor: pointer')
-    this.statusBarEl.setAttribute(
-      'title',
-      'Your daily leaderboard position among YourPulse users (Click to open YourPulse profile)',
-    )
+
     this.statusBarEl.onclick = () => {
       this.openYourPulseProfile('obsidian-plugin-statusbar')
     }
@@ -329,6 +326,10 @@ export default class YourPulse extends Plugin {
     const initDailyCount = () => {
       this.statusBarEl.setText(
         `YourPulse Rank: #${this.leaderboardPosition} (${this.currentWordCount || 0} words today)`,
+      )
+      this.statusBarEl.setAttribute(
+        'title',
+        `You rank #${this.leaderboardPosition} users today. (Click to open YourPulse profile)`,
       )
     }
 
@@ -342,7 +343,7 @@ export default class YourPulse extends Plugin {
       getLeaderBoardUser(this.settings.userId)
         .then(({ totalCount, user }) => {
           if (user) {
-            this.leaderboardPosition = `${user.ranking} / ${totalCount}`
+            this.leaderboardPosition = `${user.ranking} out of ${totalCount}`
           }
         })
         .catch(console.error)
