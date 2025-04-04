@@ -7,11 +7,12 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 
 ## Features
 
-- Gamify your writing by tracking your daily writing streak.
-- Gain valuable insights into your writing habits.
-- Share Your Progress with a free public profile URL to share your writing journey with friends or colleagues.
-- Never answer the question "What Obsidian plugins do you use?" → it‘s all on your profile.
-- Upload selected notes to your public YourPulse profile (with support of Dataview rendering).
+- **Gamify your writing** by tracking your daily writing streak.
+- **Compete with other Obsidian users** on a shared leaderboard.
+- **Gain valuable insights** into your writing habits.
+- **Share Your Progress** with a free public profile URL to share your writing journey with friends or colleagues.
+- Never answer the question **"What Obsidian plugins do you use?" → it‘s all on your profile.**
+- **Upload & share selected notes** (with support of **Dataview rendering**).
 - Seamlessly manage insights across multiple vaults.
 
 ## Usage
