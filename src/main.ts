@@ -130,7 +130,7 @@ interface YourPulseSettings {
   dayCounts: Record<string, number>
   todaysWordCount: Record<string, WordCount>
 
-  userId?: string
+  userId: string
 
   key?: string
   publicPaths?: string[]
