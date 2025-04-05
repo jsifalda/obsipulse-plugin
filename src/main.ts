@@ -425,6 +425,11 @@ export default class YourPulse extends Plugin {
 
   updateDate() {
     this.today = formatDateToYYYYMMDD(new Date())
+
+    //reset count if new day happen
+    if (this.settings.dayCounts[this.today] === undefined) {
+      this.settings.dayCounts[this.today] = 0
+    }
   }
 
   updateCounts() {
