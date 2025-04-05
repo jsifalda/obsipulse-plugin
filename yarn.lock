@@ -719,8 +719,8 @@ obsidian-dataview@^0.5.67:
     preact "^10.6.5"
 
 "obsidian@https://github.com/obsidianmd/obsidian-api/tarball/master":
-  version "1.7.2"
-  resolved "https://github.com/obsidianmd/obsidian-api/tarball/master#4826f948a82197234297bf2357b18754c38327ea"
+  version "1.8.7"
+  resolved "https://github.com/obsidianmd/obsidian-api/tarball/master#cdac2f569aa757cccb8449e7b4a7410eb4b0748d"
   dependencies:
     "@types/codemirror" "5.60.8"
     moment "2.29.4"
