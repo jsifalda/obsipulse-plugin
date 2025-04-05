@@ -494,8 +494,8 @@ export default class YourPulse extends Plugin {
   }
 
   async saveSettings() {
-    if (Object.keys(this.settings.dayCounts).length > 0) {
-      //ensuring we never reset the data by accident
+    if (Object.keys(this.settings).length > 0) {
+      // if (Object.keys(this.settings.dayCounts).length > 0) {
       await this.saveData(this.settings)
     }
   }
