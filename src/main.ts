@@ -18,10 +18,17 @@ import { DataviewCompiler } from './compilers/DataViewCompiler'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
 import { createProfileUrl } from './helpers/createProfileUrl'
 import { Encryption } from './helpers/Encryption'
-import { formatDateToYYYYMMDD } from './helpers/formatDateToYYYYMMDD'
+import { getLocalTodayDate } from './helpers/getLocalTodayDate'
 import { listAllPlugins } from './helpers/listAllPlugins'
 
-const getTodayDate = () => new Date().toISOString().slice(0, 10)
+const getTimezone = (): string | undefined => {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone
+  } catch (e) {
+    console.error('--error getting timezone', e)
+    return undefined
+  }
+}
 
 const getLeaderBoardUser = (
   userId: string,
@@ -32,7 +39,7 @@ const getLeaderBoardUser = (
   return new Promise((resolve, reject) => {
     requestUrl({
       method: 'GET',
-      url: `https://www.yourpulse.cc/app/api/leaderboard?date=${getTodayDate()}`,
+      url: `https://www.yourpulse.cc/app/api/leaderboard?date=${getLocalTodayDate()}`,
       headers: {
         'content-type': 'application/json',
       },
@@ -134,6 +141,7 @@ interface YourPulseSettings {
 
   key?: string
   publicPaths?: string[]
+  timezone: string
 }
 
 const DEFAULT_SETTINGS: YourPulseSettings = {
@@ -141,6 +149,7 @@ const DEFAULT_SETTINGS: YourPulseSettings = {
   todaysWordCount: {},
   userId: uuidv4(),
   publicPaths: [],
+  timezone: getTimezone(),
 }
 
 interface ParsedLicenseKey {
@@ -261,9 +270,6 @@ export default class YourPulse extends Plugin {
               JSON.stringify(this.settings.dayCounts),
             )
           }
-          // else {
-          //   console.log('--no db update', this.settings.userId, this.debouncedUpdateDb)
-          // }
         }
       }),
     )
@@ -424,7 +430,7 @@ export default class YourPulse extends Plugin {
   }
 
   updateDate() {
-    this.today = formatDateToYYYYMMDD(new Date())
+    this.today = getLocalTodayDate()
 
     //reset count if new day happen
     if (this.settings.dayCounts[this.today] === undefined) {
@@ -491,6 +497,7 @@ export default class YourPulse extends Plugin {
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
+    this.settings.timezone = getTimezone() // always override timezone with current
   }
 
   async saveSettings() {
