@@ -435,6 +435,7 @@ export default class YourPulse extends Plugin {
     //reset count if new day happen
     if (this.settings.dayCounts[this.today] === undefined) {
       this.settings.dayCounts[this.today] = 0
+      this.settings.todaysWordCount = {}
     }
   }
 
