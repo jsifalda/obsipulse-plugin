@@ -1,7 +1,7 @@
 {
   "name": "yourpulse",
   "private": true,
-  "version": "1.18.2",
+  "version": "1.19.0",
   "description": "This is an Obsidian.md plugin that lets you view your daily word count.",
   "main": "main.js",
   "scripts": {
