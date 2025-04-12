@@ -20,6 +20,7 @@ import { createProfileUrl } from './helpers/createProfileUrl'
 import { Encryption } from './helpers/Encryption'
 import { getLocalTodayDate } from './helpers/getLocalTodayDate'
 import { listAllPlugins } from './helpers/listAllPlugins'
+import './styles.css'
 
 const getTimezone = (): string | undefined => {
   try {
@@ -72,8 +73,27 @@ class YourPulseSettingTab extends PluginSettingTab {
     containerEl.empty()
 
     new Setting(containerEl)
+      .setName('Private Mode')
+      .setDesc('Hide your profile from public view and leaderboards')
+      .addToggle((toggle) => {
+        toggle
+          // .setValue(this.plugin.settings.privateMode)
+          .setValue(false)
+          .setDisabled(true)
+        // .onChange(async (value) => {
+        //   this.plugin.settings.privateMode = value
+        //   await this.plugin.saveSettings()
+        // })
+      })
+      .setClass('private-mode-setting')
+      .descEl.createEl('div', {
+        text: '⚠️ This feature requires a valid license. Please purchase a license to enable private mode.',
+        cls: 'setting-item-description',
+      })
+
+    const licenceOptions = new Setting(containerEl)
       .setName('License key')
-      .setDesc('Enter your license key to access PRO features')
+      .setDesc('Get access to premium features including private mode')
       .addText((text) =>
         text
           .setPlaceholder('Your license key here...')
@@ -87,6 +107,17 @@ class YourPulseSettingTab extends PluginSettingTab {
             this.plugin.updatePluginList()
           }),
       )
+
+    if (!this.plugin.settings.key) {
+      licenceOptions.addButton((button) => {
+        button
+          .setButtonText('Request License')
+          .setCta()
+          .onClick(() => {
+            window.open('mailto:sifalda.jiri@gmail.com?subject=YourPulse%20License%20Request', '_blank')
+          })
+      })
+    }
 
     new Setting(containerEl)
       .setName('Files to be published')
@@ -142,6 +173,7 @@ interface YourPulseSettings {
   key?: string
   publicPaths?: string[]
   timezone: string
+  // privateMode: boolean
 }
 
 const DEFAULT_SETTINGS: YourPulseSettings = {
@@ -150,6 +182,7 @@ const DEFAULT_SETTINGS: YourPulseSettings = {
   userId: uuidv4(),
   publicPaths: [],
   timezone: getTimezone(),
+  // privateMode: false,
 }
 
 interface ParsedLicenseKey {

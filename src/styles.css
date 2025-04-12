@@ -1,0 +1,13 @@
+.private-mode-setting {
+  opacity: 0.7;
+}
+
+.private-mode-setting .setting-item-description {
+  color: var(--text-warning);
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.private-mode-setting .setting-item-control {
+  pointer-events: none;
+}
