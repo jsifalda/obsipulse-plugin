@@ -104,6 +104,19 @@ class YourPulseSettingTab extends PluginSettingTab {
           }),
       )
 
+    new Setting(containerEl)
+      .setName('Hide Status Bar Stats')
+      .setDesc(
+        'Hide the status bar stats for this plugin. Useful if you want to keep your workspace clean and distraction-free.',
+      )
+      .addToggle((toggle) => {
+        toggle.setValue(!this.plugin.settings.statusBarStats).onChange(async (value) => {
+          this.plugin.settings.statusBarStats = !value
+          this.plugin.updateStatusBarIfNeeded()
+          await this.plugin.saveSettings()
+        })
+      })
+
     new Setting(containerEl).setName('Version').setDesc(this.plugin.manifest.version)
     new Setting(containerEl).setName('User ID').setDesc(this.plugin.settings.userId)
 
@@ -148,6 +161,7 @@ interface YourPulseSettings {
   publicPaths?: string[]
   timezone: string
   // privateMode: boolean
+  statusBarStats?: boolean
 }
 
 const DEFAULT_SETTINGS: YourPulseSettings = {
@@ -156,6 +170,7 @@ const DEFAULT_SETTINGS: YourPulseSettings = {
   publicPaths: [],
   timezone: getTimezone(),
   // privateMode: false,
+  statusBarStats: true,
 }
 
 interface ParsedLicenseKey {
@@ -246,7 +261,7 @@ export default class YourPulse extends Plugin {
   }
 
   async onload() {
-    console.log('YourPulse Plugin Loaded', this.manifest.version)
+    console.log('[yourpulse] Plugin Loaded', this.manifest.version)
 
     addIcon(ObsiPulseIcon.name, ObsiPulseIcon.html)
 
@@ -270,10 +285,9 @@ export default class YourPulse extends Plugin {
     // }
 
     this.updatePluginList()
-
     this.initStatusBar()
-
     this.updateDate()
+
     // @ts-ignore
     this.previousPlugins = new Set(this.app.plugins.enabledPlugins)
 
@@ -383,10 +397,26 @@ export default class YourPulse extends Plugin {
   }
 
   onunload(): void {
-    console.log('--YourPulse Plugin Unloaded')
+    console.log('[yourpulse] Plugin Unloaded')
   }
 
-  initStatusBar() {
+  updateStatusBarIfNeeded() {
+    console.log('[yourpulse] updating statusbar', this.settings.statusBarStats)
+
+    if (this.settings.statusBarStats) {
+      if (!this.statusBarEl) {
+        this.addStatusBar()
+      }
+    } else {
+      if (this.statusBarEl) {
+        this.statusBarEl.remove()
+        this.statusBarEl = undefined
+        // console.log('[yourpulse] status bar stats removed')
+      }
+    }
+  }
+
+  addStatusBar() {
     this.statusBarEl = this.addStatusBarItem()
     this.statusBarEl.setAttribute('style', 'cursor: pointer')
 
@@ -394,7 +424,12 @@ export default class YourPulse extends Plugin {
       this.openYourPulseProfile('obsidian-plugin-statusbar')
     }
 
-    const initDailyCount = () => {
+    this.updateStatusBarText()
+    console.log('[yourpulse] status bar stats initialized')
+  }
+
+  updateStatusBarText() {
+    if (this.statusBarEl) {
       this.statusBarEl.setText(
         `YourPulse Rank: #${this.leaderboardPosition} (${this.currentWordCount || 0} words today)`,
       )
@@ -403,10 +438,12 @@ export default class YourPulse extends Plugin {
         `You rank #${this.leaderboardPosition} users today. (Click to open YourPulse profile)`,
       )
     }
+  }
 
+  initStatusBar() {
     this.registerInterval(
       window.setInterval(() => {
-        initDailyCount()
+        this.updateStatusBarText()
       }, 4000),
     )
 
@@ -427,6 +464,10 @@ export default class YourPulse extends Plugin {
         initLeaderboard()
       }, 60 * 1000 * 5), // 5 minutes
     )
+
+    if (this.settings.statusBarStats) {
+      this.addStatusBar()
+    }
   }
 
   openYourPulseProfile(ref: string) {
@@ -608,8 +649,7 @@ export default class YourPulse extends Plugin {
 
   async saveSettings() {
     if (Object.keys(this.settings).length > 0) {
-      // if (Object.keys(this.settings.dayCounts).length > 0) {
-      console.time('[yourpulse] saveSettings')
+      // console.time('[yourpulse] saveSettings')
 
       if (this.settings.devices && Object.keys(this.settings.devices).length > 0) {
         try {
@@ -636,7 +676,7 @@ export default class YourPulse extends Plugin {
       }
 
       await this.saveData(this.settings)
-      console.timeEnd('[yourpulse] saveSettings')
+      // console.timeEnd('[yourpulse] saveSettings')
     }
   }
 }
