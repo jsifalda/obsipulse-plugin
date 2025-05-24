@@ -164,12 +164,14 @@ interface WordCount {
   current: number
 }
 
-interface YourPulseSettings {
+interface DeviceData {
   dayCounts: Record<string, number>
   todaysWordCount: Record<string, WordCount>
+}
 
+interface YourPulseSettings {
+  devices: Record<string, DeviceData>
   userId: string
-
   key?: string
   publicPaths?: string[]
   timezone: string
@@ -177,8 +179,7 @@ interface YourPulseSettings {
 }
 
 const DEFAULT_SETTINGS: YourPulseSettings = {
-  dayCounts: {},
-  todaysWordCount: {},
+  devices: {},
   userId: uuidv4(),
   publicPaths: [],
   timezone: getTimezone(),
@@ -216,6 +217,62 @@ export default class YourPulse extends Plugin {
 
   private previousPlugins: Set<string> = new Set()
 
+  private deviceName: string
+
+  private getDeviceName(): string {
+    if (this.deviceName) {
+      return this.deviceName
+    }
+
+    // @ts-ignore
+    const syncPlugin = this.app.internalPlugins.plugins['sync'].instance
+    this.deviceName = syncPlugin.deviceName ? syncPlugin.deviceName : syncPlugin.getDefaultDeviceName()
+
+    if (!this.deviceName) {
+      this.deviceName = this.app.vault.adapter.getName() || uuidv4()
+    }
+
+    console.log('[yourpulse] device name:', this.deviceName)
+
+    return this.deviceName
+  }
+
+  private ensureDeviceExists(): void {
+    if (!this.settings.devices) {
+      this.settings.devices = {}
+    }
+
+    const deviceName = this.getDeviceName()
+    if (!this.settings.devices[deviceName]) {
+      this.settings.devices[deviceName] = {
+        dayCounts: {},
+        todaysWordCount: {},
+      }
+    }
+    this.deviceName = deviceName
+  }
+
+  private getLocalData(): DeviceData {
+    this.ensureDeviceExists()
+    return this.settings.devices[this.deviceName]
+  }
+
+  private getFlattenedDayCountsForDb(): Record<string, number> {
+    // Combine counts from all devices
+    const combined: Record<string, number> = {}
+
+    // For each device
+    Object.values(this.settings.devices).forEach((deviceData) => {
+      // For each day in this device
+      Object.entries(deviceData.dayCounts).forEach(([day, count]) => {
+        // Add count to the total for this day
+        combined[day] = (combined[day] || 0) + count
+      })
+    })
+
+    return combined
+  }
+
   async onload() {
     console.log('YourPulse Plugin Loaded', this.manifest.version)
 
@@ -245,6 +302,7 @@ export default class YourPulse extends Plugin {
     this.initStatusBar()
 
     this.updateDate()
+    // @ts-ignore
     this.previousPlugins = new Set(this.app.plugins.enabledPlugins)
 
     this.debouncedUpdate = debounce(
@@ -255,8 +313,9 @@ export default class YourPulse extends Plugin {
       1000,
       false,
     )
-
-    if (this.settings.dayCounts.hasOwnProperty(this.today)) {
+    this.ensureDeviceExists()
+    const deviceData = this.getLocalData()
+    if (deviceData.dayCounts.hasOwnProperty(this.today)) {
       this.updateCounts()
     } else {
       this.currentWordCount = 0
@@ -280,6 +339,7 @@ export default class YourPulse extends Plugin {
     if (this.app.workspace.layoutReady) {
       this.initLeaf()
     } else {
+      // @ts-ignore
       this.registerEvent(this.app.workspace.on('layout-ready', this.initLeaf.bind(this)))
     }
 
@@ -300,7 +360,7 @@ export default class YourPulse extends Plugin {
           if (this.settings.userId) {
             this.updateDb(
               `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
-              JSON.stringify(this.settings.dayCounts),
+              JSON.stringify(this.getFlattenedDayCountsForDb()),
             )
           }
         }
@@ -442,48 +502,52 @@ export default class YourPulse extends Plugin {
     }
     return words
   }
-
   updateWordCount(contents: string, filepath: string) {
+    this.ensureDeviceExists()
+    const deviceData = this.getLocalData()
     const curr = this.getWordCount(contents)
 
-    if (this.settings.dayCounts.hasOwnProperty(this.today)) {
-      if (this.settings.todaysWordCount.hasOwnProperty(filepath)) {
+    if (deviceData.dayCounts.hasOwnProperty(this.today)) {
+      if (deviceData.todaysWordCount.hasOwnProperty(filepath)) {
         //updating existing file
-        this.settings.todaysWordCount[filepath].current = curr
+        deviceData.todaysWordCount[filepath].current = curr
       } else {
         //created new file during session
-        this.settings.todaysWordCount[filepath] = { initial: curr, current: curr }
+        deviceData.todaysWordCount[filepath] = { initial: curr, current: curr }
       }
     } else {
       //new day, flush the cache
-      this.settings.todaysWordCount = {}
-      this.settings.todaysWordCount[filepath] = { initial: curr, current: curr }
+      deviceData.todaysWordCount = {}
+      deviceData.todaysWordCount[filepath] = { initial: curr, current: curr }
     }
     this.updateCounts()
   }
 
   updateDate() {
     this.today = getLocalTodayDate()
+    this.ensureDeviceExists()
+    const deviceData = this.getLocalData()
 
     //reset count if new day happen
-    if (this.settings.dayCounts[this.today] === undefined) {
-      this.settings.dayCounts[this.today] = 0
-      this.settings.todaysWordCount = {}
+    if (deviceData.dayCounts[this.today] === undefined) {
+      deviceData.dayCounts[this.today] = 0
+      deviceData.todaysWordCount = {}
     }
   }
 
   updateCounts() {
-    this.currentWordCount = Object.values(this.settings.todaysWordCount)
+    this.ensureDeviceExists()
+    const deviceData = this.getLocalData()
+
+    this.currentWordCount = Object.values(deviceData.todaysWordCount)
       .map((wordCount) => Math.max(0, wordCount.current - wordCount.initial))
       .reduce((a, b) => a + b, 0)
-    this.settings.dayCounts[this.today] = this.currentWordCount
-
-    // console.log('---word count updated', this.currentWordCount, this.settings.dayCounts, this.settings)
+    deviceData.dayCounts[this.today] = this.currentWordCount
 
     this.hasCountChanged = true
   }
-
   checkForPluginChanges() {
+    // @ts-ignore - App type definition issue
     const currentPlugins = new Set<string>(this.app.plugins.enabledPlugins)
     let pluginListHasChanged = false
     // Check for newly enabled plugins
@@ -528,16 +592,79 @@ export default class YourPulse extends Plugin {
         .catch(console.error)
     )
   }
-
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
     this.settings.timezone = getTimezone() // always override timezone with current
+
+    // Migrate old data format to new nested structure if needed
+    this.ensureDeviceExists()
+
+    // If we have old data format, migrate it to the device-based structure
+    if ('dayCounts' in this.settings || 'todaysWordCount' in this.settings) {
+      const deviceName = this.getDeviceName()
+
+      // @ts-ignore - Handling old format migration
+      if (this.settings.dayCounts) {
+        if (!this.settings.devices[deviceName]) {
+          this.settings.devices[deviceName] = {
+            dayCounts: {},
+            todaysWordCount: {},
+          }
+        }
+        // @ts-ignore - Handling old format migration
+        this.settings.devices[deviceName].dayCounts = this.settings.dayCounts
+      }
+
+      // @ts-ignore - Handling old format migration
+      if (this.settings.todaysWordCount) {
+        if (!this.settings.devices[deviceName]) {
+          this.settings.devices[deviceName] = {
+            dayCounts: {},
+            todaysWordCount: {},
+          }
+        }
+        // @ts-ignore - Handling old format migration
+        this.settings.devices[deviceName].todaysWordCount = this.settings.todaysWordCount
+      }
+
+      // // @ts-ignore - Cleanup old format
+      // delete this.settings.dayCounts
+      // // @ts-ignore - Cleanup old format
+      // delete this.settings.todaysWordCount
+    }
   }
 
   async saveSettings() {
     if (Object.keys(this.settings).length > 0) {
       // if (Object.keys(this.settings.dayCounts).length > 0) {
+      console.time('[yourpulse] saveSettings')
+
+      if (this.settings.devices && Object.keys(this.settings.devices).length > 0) {
+        try {
+          // check for another device in data, and merge it with current one
+          const tempt = await this.loadData()
+          if (tempt && tempt.devices) {
+            delete tempt.devices[this.deviceName]
+
+            if (Object.keys(tempt.devices).length > 0) {
+              const devices = Object.keys(tempt.devices)
+              devices.forEach((device) => {
+                this.settings.devices[device] = {
+                  ...(tempt.devices[device] || {}),
+                  ...(this.settings.devices[device] || {}),
+                }
+              })
+
+              // console.log('--merged devices', this.settings.devices)
+            }
+          }
+        } catch (e) {
+          console.error('[yourpulse] error merging devices settings', e)
+        }
+      }
+
       await this.saveData(this.settings)
+      console.timeEnd('[yourpulse] saveSettings')
     }
   }
 }
