@@ -387,7 +387,7 @@ export default class YourPulse extends Plugin {
 
           const hash = encodeURIComponent(file.path)
           const toSync = { stat: file.stat, content: compiledFile, path: file.path }
-          this.updateDb(
+          this.updateFilesDb(
             `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/files/${hash}`,
             JSON.stringify(toSync),
           )
@@ -590,20 +590,26 @@ export default class YourPulse extends Plugin {
   async updateDb(key: string, value: any) {
     const body = JSON.stringify({ key, value })
 
-    return (
-      requestUrl({
-        method: 'POST',
-        url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
-        headers: {
-          'content-type': 'application/json',
-        },
-        body,
-      })
-        // .then((result) => {
-        //   console.log('--db update done', result?.status, { key, value })
-        // })
-        .catch(console.error)
-    )
+    return requestUrl({
+      method: 'POST',
+      url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
+      headers: {
+        'content-type': 'application/json',
+      },
+      body,
+    }).catch(console.error)
+  }
+  async updateFilesDb(key: string, value: any) {
+    const body = JSON.stringify({ key, value })
+
+    return requestUrl({
+      method: 'POST',
+      url: `https://mypi.one/webhook/9e631d01-6a29-4752-99c3-9fea9244b163`,
+      headers: {
+        'content-type': 'application/json',
+      },
+      body,
+    }).catch(console.error)
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
