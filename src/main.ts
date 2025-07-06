@@ -20,6 +20,7 @@ import { createProfileUrl } from './helpers/createProfileUrl'
 import { Encryption } from './helpers/Encryption'
 import { getLeaderBoardUser } from './helpers/getLeaderBoardUser'
 import { getLocalTodayDate } from './helpers/getLocalTodayDate'
+import { hasYpPublishFileProperty } from './helpers/isYpPublish'
 import { listAllPlugins } from './helpers/listAllPlugins'
 import './styles.css'
 
@@ -93,7 +94,9 @@ class YourPulseSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Files to be published')
-      .setDesc('List of files to be shared publicly via YourPulse.com profile (one per line)')
+      .setDesc(
+        'List of files to be shared publicly via YourPulse.com profile (one per line). You can also mark a note for publishing by adding `yp-publish: true` to its file properties (frontmatter).',
+      )
       .addTextArea((textArea) =>
         textArea
           .setPlaceholder('public-path.md\n/public-dir\n!/public-dir/not-public-path.md')
@@ -378,7 +381,10 @@ export default class YourPulse extends Plugin {
         //   this.settings.publicPaths.includes(file.path),
         // )
 
-        if (this.settings.publicPaths.includes(file.path)) {
+        if (
+          this.settings.publicPaths.includes(file.path) ||
+          (await hasYpPublishFileProperty(file, this.app))
+        ) {
           const dataviewCompiler = new DataviewCompiler()
           const fileContent = await this.app.vault.read(file)
           console.time('compile')

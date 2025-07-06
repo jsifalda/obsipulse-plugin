@@ -11,7 +11,7 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 - **Compete with other Obsidian users** on a shared leaderboard.
 - **Gain valuable insights** into your writing habits.
 - **Share Your Progress** with a free public profile URL to share your writing journey with friends or colleagues.
-- Never answer the question **"What Obsidian plugins do you use?" → it‘s all on your profile.**
+- Never answer the question **"What Obsidian plugins do you use?" → it's all on your profile.**
 - **Upload & share selected notes** (with support of **Dataview rendering**).
 - Seamlessly manage insights across multiple vaults.
 
@@ -28,7 +28,7 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 ### Settings
 
 - **License Key**: Enter your license key to activate the plugin.
-- **Files to be Published**: Specify the list of files to be shared publicly.
+- **Files to be Published**: Specify the list of files to be shared publicly -> or you can also mark a note for publishing by adding `yp-publish: true` to its file properties (frontmatter).
 
 ### Development Server
 
@@ -51,7 +51,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 - **How secure is my data with YourPulse?**
   - We take your privacy seriously. No personal data from your vault is shared with us (it stays in your vault), plugin only collects your anonymised behavioural data points - such as the number of words written.
 - **Can I use YourPulse offline?**
-  - Yes, all features work offline, with sync occurring when you‘re back online.
+  - Yes, all features work offline, with sync occurring when you're back online.
 - **What network requests and why this plugin does?**
   - YourPulse Plugins makes API calls to store meta data of your writing activity and the list of plugins you use. Nothing else, no third party tracking or analysis. **We don't send your note content anywhere without your permission!**
 - **Will YourPulse work with multiple Obsidian vaults?**
