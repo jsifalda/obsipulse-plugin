@@ -45,22 +45,26 @@ class YourPulseSettingTab extends PluginSettingTab {
     const { containerEl } = this
     containerEl.empty()
 
+    // Check if license key is valid
+    const isValidLicense = this.plugin.settings.key && parseLicenseKey(this.plugin.settings.key)
+
     new Setting(containerEl)
       .setName('Private Mode')
       .setDesc('Hide your profile from public view and leaderboards')
       .addToggle((toggle) => {
         toggle
-          // .setValue(this.plugin.settings.privateMode)
-          .setValue(false)
-          .setDisabled(true)
-        // .onChange(async (value) => {
-        //   this.plugin.settings.privateMode = value
-        //   await this.plugin.saveSettings()
-        // })
+          .setValue(this.plugin.settings.privateMode)
+          .setDisabled(!isValidLicense)
+          .onChange(async (value) => {
+            this.plugin.settings.privateMode = value
+            await this.plugin.saveSettings()
+          })
       })
       .setClass('private-mode-setting')
       .descEl.createEl('div', {
-        text: '⚠️ This feature requires a valid license. Please purchase a license to enable private mode.',
+        text: isValidLicense
+          ? '✅ Private mode is available with your license key.'
+          : '⚠️ This feature requires a valid license. Please purchase a license to enable private mode.',
         cls: 'setting-item-description',
       })
 
@@ -76,8 +80,12 @@ class YourPulseSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings()
 
             const parsedKey = parseLicenseKey(value)
-            this.plugin.settings.userId = parsedKey.userId
-            this.plugin.updatePluginList()
+            if (parsedKey) {
+              this.plugin.settings.userId = parsedKey.userId
+              this.plugin.updatePluginList()
+              // Refresh the settings display to update private mode toggle
+              this.display()
+            }
           }),
       )
 
@@ -163,7 +171,7 @@ interface YourPulseSettings {
   key?: string
   publicPaths?: string[]
   timezone: string
-  // privateMode: boolean
+  privateMode: boolean
   statusBarStats?: boolean
 }
 
@@ -172,7 +180,7 @@ const DEFAULT_SETTINGS: YourPulseSettings = {
   userId: uuidv4(),
   publicPaths: [],
   timezone: getTimezone(),
-  // privateMode: false,
+  privateMode: false,
   statusBarStats: true,
 }
 
