@@ -20,7 +20,7 @@
 
 ## Tasks
 
-- [ ] 1.0 Enable Private Mode Settings Integration
+- [x] 1.0 Enable Private Mode Settings Integration
 
   - [x] 1.1 Uncomment privateMode field in YourPulseSettings interface
   - [x] 1.2 Add privateMode to DEFAULT_SETTINGS with false as default value
@@ -32,13 +32,13 @@
 
 - [ ] 2.0 Implement API Request Blocking System
 
-  - [ ] 2.1 Create apiInterceptor utility with isPrivateModeActive() function
-  - [ ] 2.2 Modify updateDb() method to check private mode before making API requests
-  - [ ] 2.3 Modify updateFilesDb() method to check private mode before making API requests
-  - [ ] 2.4 Modify updatePluginList() method to check private mode before making API requests
-  - [ ] 2.5 Add private mode check to all other API call locations in the codebase
-  - [ ] 2.6 Implement logging for blocked API requests when private mode is active
-  - [ ] 2.7 Add unit tests for API blocking functionality
+  - [x] 2.1 Create apiInterceptor utility with isPrivateModeActive() function
+  - [x] 2.2 Modify updateDb() method to check private mode before making API requests
+  - [x] 2.3 Modify updateFilesDb() method to check private mode before making API requests
+  - [x] 2.4 Modify updatePluginList() method to check private mode before making API requests
+  - [x] 2.5 Add private mode check to all other API call locations in the codebase
+  - [x] 2.6 Implement logging for blocked API requests when private mode is active
+  - [x] 2.7 Add unit tests for API blocking functionality
 
 - [ ] 3.0 Create Modal Window System for Private Mode
 

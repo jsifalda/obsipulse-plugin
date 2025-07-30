@@ -23,6 +23,7 @@ import { getLocalTodayDate } from './helpers/getLocalTodayDate'
 import { hasYpPublishFileProperty } from './helpers/isYpPublish'
 import { listAllPlugins } from './helpers/listAllPlugins'
 import './styles.css'
+import { ApiInterceptor } from './utils/apiInterceptor'
 
 const getTimezone = (): string | undefined => {
   try {
@@ -217,6 +218,8 @@ export default class YourPulse extends Plugin {
 
   private deviceName: string
 
+  private apiInterceptor: ApiInterceptor
+
   private getDeviceName(): string {
     if (this.deviceName) {
       return this.deviceName
@@ -277,6 +280,9 @@ export default class YourPulse extends Plugin {
     addIcon(ObsiPulseIcon.name, ObsiPulseIcon.html)
 
     await this.loadSettings()
+
+    // Initialize API interceptor for private mode
+    this.apiInterceptor = new ApiInterceptor({ plugin: this })
 
     this.addRibbonIcon(ObsiPulseIcon.name, 'Open YourPulse Profile', () => {
       this.openYourPulseProfile('obsidian-plugin-ribbon')
@@ -462,7 +468,7 @@ export default class YourPulse extends Plugin {
     )
 
     const initLeaderboard = () => {
-      getLeaderBoardUser(this.settings.userId)
+      getLeaderBoardUser(this.settings.userId, this)
         .then(({ totalCount, user }) => {
           if (user) {
             this.leaderboardPosition = `${user.ranking} out of ${totalCount}`
@@ -602,28 +608,32 @@ export default class YourPulse extends Plugin {
   }
 
   async updateDb(key: string, value: any) {
-    const body = JSON.stringify({ key, value })
+    return this.apiInterceptor.executeIfAllowed(async () => {
+      const body = JSON.stringify({ key, value })
 
-    return requestUrl({
-      method: 'POST',
-      url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
-      headers: {
-        'content-type': 'application/json',
-      },
-      body,
-    }).catch(console.error)
+      return requestUrl({
+        method: 'POST',
+        url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
+        headers: {
+          'content-type': 'application/json',
+        },
+        body,
+      }).catch(console.error)
+    })
   }
   async updateFilesDb(key: string, value: any) {
-    const body = JSON.stringify({ key, value })
+    return this.apiInterceptor.executeIfAllowed(async () => {
+      const body = JSON.stringify({ key, value })
 
-    return requestUrl({
-      method: 'POST',
-      url: `https://mypi.one/webhook/9e631d01-6a29-4752-99c3-9fea9244b163`,
-      headers: {
-        'content-type': 'application/json',
-      },
-      body,
-    }).catch(console.error)
+      return requestUrl({
+        method: 'POST',
+        url: `https://mypi.one/webhook/9e631d01-6a29-4752-99c3-9fea9244b163`,
+        headers: {
+          'content-type': 'application/json',
+        },
+        body,
+      }).catch(console.error)
+    })
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
