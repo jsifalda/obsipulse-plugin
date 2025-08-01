@@ -9,7 +9,7 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 
 - **Gamify your writing** by tracking your daily writing streak.
 - **Gain valuable insights** into your writing habits.
-- **Private Mode**: Activate with your license key to ensure no data leaves your vault - perfect for privacy-conscious users who value their privacy.
+- **Private Mode**: Activate with your license key to ensure no data leaves your vault - perfect for users who value their privacy.
 
 ### Public Profile Features
 
@@ -21,7 +21,7 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 
 ## Usage
 
-- Install the plguin from Obsidian's community plugins (or via BRAT).
+- Install the plugin from Obsidian's community plugins (or via BRAT).
 - Write notes as you normally would.
 - Run command `Open Public Profile` and your YourPulse public profile will open in your browser.
 
