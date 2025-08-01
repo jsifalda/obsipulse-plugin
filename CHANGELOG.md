@@ -1,5 +1,13 @@
 # Changelog
 
+## 202501191315 - Fixed Tailwind CSS Loading Error
+
+- Fixed "GET app://obsidian.md/tailwindcss net::ERR_FILE_NOT_FOUND" error when loading plugin
+- Updated rollup.config.js to properly process Tailwind CSS v4 with PostCSS
+- Added @tailwindcss/postcss dependency for Tailwind CSS v4 PostCSS integration
+- Added autoprefixer dependency for CSS vendor prefixing
+- Resolved Tailwind CSS import issues in styles.css
+
 ## 202501191300 - Created Migration Task Plan for Rollup to esbuild
 
 - Created comprehensive task plan for migrating from Rollup to esbuild build system
