@@ -6,11 +6,11 @@ import { renderModalContent, unmountModalContent } from './PrivateModeModalConte
  * Displays local content instead of redirecting to external pages
  */
 export class PrivateModeModal extends Modal {
-  private content: string
+  private data: any
 
-  constructor(app: any, content?: string) {
+  constructor(app: any, data: any) {
     super(app)
-    this.content = content
+    this.data = data
   }
 
   onOpen(): void {
@@ -18,7 +18,7 @@ export class PrivateModeModal extends Modal {
     contentEl.empty()
 
     // Render React component into modal
-    renderModalContent(contentEl, this.content, () => {
+    renderModalContent(contentEl, this.data, () => {
       this.close()
     })
 

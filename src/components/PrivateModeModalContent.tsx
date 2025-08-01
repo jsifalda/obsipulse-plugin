@@ -1,12 +1,14 @@
+import { Card, CardContent } from '@/components/ui/card'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { VaultDetail } from './VaultDetail'
 
 interface PrivateModeModalContentProps {
-  content: string
+  data: any
   onClose: () => void
 }
 
-export const PrivateModeModalContent: React.FC<PrivateModeModalContentProps> = ({ content, onClose }) => {
+export const PrivateModeModalContent: React.FC<PrivateModeModalContentProps> = ({ data, onClose }) => {
   return (
     <div className="private-mode-modal">
       <div className="private-mode-modal-header">
@@ -14,21 +16,26 @@ export const PrivateModeModalContent: React.FC<PrivateModeModalContentProps> = (
       </div>
 
       <div className="private-mode-modal-content">
-        are you sure???
-        <p>{content}</p>
+        <div>
+          <Card>
+            <CardContent>
+              <VaultDetail vault={data} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
-      <div className="private-mode-modal-footer">
+      {/* <div className="private-mode-modal-footer">
         <button className="mod-cta" onClick={onClose}>
           Close
         </button>
-      </div>
+      </div> */}
     </div>
   )
 }
 
-export const renderModalContent = (container: HTMLElement, content: string, onClose: () => void) => {
-  ReactDOM.render(<PrivateModeModalContent content={content} onClose={onClose} />, container)
+export const renderModalContent = (container: HTMLElement, data: any, onClose: () => void) => {
+  ReactDOM.render(<PrivateModeModalContent data={data} onClose={onClose} />, container)
 }
 
 export const unmountModalContent = (container: HTMLElement) => {

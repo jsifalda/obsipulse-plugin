@@ -25,6 +25,7 @@ import { hasYpPublishFileProperty } from './helpers/isYpPublish'
 import { listAllPlugins } from './helpers/listAllPlugins'
 import './styles.css'
 import { ApiInterceptor } from './utils/apiInterceptor'
+import { DeviceData, YourPulseSettings } from '@/lib/types'
 
 const getTimezone = (): string | undefined => {
   try {
@@ -170,26 +171,6 @@ class YourPulseSettingTab extends PluginSettingTab {
           })
       })
   }
-}
-
-interface WordCount {
-  initial: number
-  current: number
-}
-
-interface DeviceData {
-  dayCounts: Record<string, number>
-  todaysWordCount: Record<string, WordCount>
-}
-
-interface YourPulseSettings {
-  devices: Record<string, DeviceData>
-  userId: string
-  key?: string
-  publicPaths?: string[]
-  timezone: string
-  privateMode: boolean
-  statusBarStats?: boolean
 }
 
 const DEFAULT_SETTINGS: YourPulseSettings = {
@@ -530,7 +511,8 @@ export default class YourPulse extends Plugin {
   }
 
   showPrivateModeModal() {
-    const modal = new PrivateModeModal(this.app)
+    // TODO: it should not be only this device?!
+    const modal = new PrivateModeModal(this.app, this.settings.devices[this.deviceName])
     modal.open()
   }
 
