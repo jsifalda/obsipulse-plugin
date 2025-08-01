@@ -140,9 +140,12 @@
 .private-mode-modal {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-height: 400px;
+  width: 80vw;
+  height: 80vh;
   min-width: 300px;
+  min-height: 400px;
+  max-width: 90vw;
+  max-height: 90vh;
 }
 
 .private-mode-modal-header {

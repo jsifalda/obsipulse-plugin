@@ -1,5 +1,11 @@
 # Changelog
 
+## 202501201430
+- Updated private mode modal to be responsive with 80% width/height
+- Added viewport units (vw/vh) for responsive sizing
+- Set min/max constraints to prevent extreme sizes
+- Improved modal usability across different screen sizes
+
 ## 202501191315 - Fixed Tailwind CSS Loading Error
 
 - Fixed "GET app://obsidian.md/tailwindcss net::ERR_FILE_NOT_FOUND" error when loading plugin
