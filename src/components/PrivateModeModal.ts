@@ -1,4 +1,5 @@
 import { Modal } from 'obsidian'
+import { renderModalContent, unmountModalContent } from './PrivateModeModalContent'
 
 /**
  * Modal component for private mode interactions
@@ -7,7 +8,7 @@ import { Modal } from 'obsidian'
 export class PrivateModeModal extends Modal {
   private content: string
 
-  constructor(app: any, content: string = 'hello') {
+  constructor(app: any, content?: string) {
     super(app)
     this.content = content
   }
@@ -16,25 +17,8 @@ export class PrivateModeModal extends Modal {
     const { contentEl } = this
     contentEl.empty()
 
-    // Create modal container
-    const container = contentEl.createDiv('private-mode-modal')
-
-    // Add header
-    const header = container.createDiv('private-mode-modal-header')
-    header.createEl('h2', { text: 'YourPulse - Private Mode' })
-
-    // Add content area
-    const contentArea = container.createDiv('private-mode-modal-content')
-    contentArea.createEl('p', { text: this.content })
-
-    // Add footer with close button
-    const footer = container.createDiv('private-mode-modal-footer')
-    const closeButton = footer.createEl('button', {
-      text: 'Close',
-      cls: 'mod-cta',
-    })
-
-    closeButton.addEventListener('click', () => {
+    // Render React component into modal
+    renderModalContent(contentEl, this.content, () => {
       this.close()
     })
 
@@ -46,6 +30,7 @@ export class PrivateModeModal extends Modal {
 
   onClose(): void {
     const { contentEl } = this
+    unmountModalContent(contentEl)
     contentEl.empty()
   }
 }

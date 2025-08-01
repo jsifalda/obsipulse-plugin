@@ -16,7 +16,9 @@
       "es2015",
       "DOM.Iterable"
     ],
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "**/*.ts",

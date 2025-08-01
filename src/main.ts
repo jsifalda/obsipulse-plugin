@@ -522,15 +522,15 @@ export default class YourPulse extends Plugin {
   openYourPulseProfile(ref: string) {
     if (this.settings.privateMode) {
       // Show modal instead of external redirect when private mode is active
-      this.showPrivateModeModal('hello')
+      this.showPrivateModeModal()
     } else {
       // Normal behavior when private mode is disabled
       window.open(createProfileUrl(this.settings.userId, ref), '_blank')
     }
   }
 
-  showPrivateModeModal(content: string = 'hello') {
-    const modal = new PrivateModeModal(this.app, content)
+  showPrivateModeModal() {
+    const modal = new PrivateModeModal(this.app)
     modal.open()
   }
 
