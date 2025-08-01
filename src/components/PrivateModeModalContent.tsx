@@ -1,4 +1,3 @@
-import { Card, CardContent } from '@/components/ui/card'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { VaultDetail } from './VaultDetail'
