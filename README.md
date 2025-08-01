@@ -23,7 +23,7 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 
 - Install the plugin from Obsidian's community plugins (or via BRAT).
 - Write notes as you normally would.
-- Run command `Open Public Profile` and your YourPulse public profile will open in your browser.
+- Run `YourPulse` command and your YourPulse profile will open.
 
 > Example of a public profile: [https://www.yourpulse.cc/app/profile/0b3417c00370b98c](https://www.yourpulse.cc/app/profile/0b3417c00370b98c)
 
@@ -31,8 +31,12 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 
 ### Settings
 
+_(Optional)_
+
 - **License Key**: Enter your license key to activate the plugin.
 - **Files to be Published**: Specify the list of files to be shared publicly -> or you can also mark a note for publishing by adding `yp-publish: true` to its file properties (frontmatter).
+- **Private Mode**: Activate with your license key to ensure no data leaves your vault - perfect for users who value their privacy.
+- **Hide Status Bar**: Hide the status bar info.
 
 ### Development Server
 
