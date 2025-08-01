@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { ObsiPulseIcon } from './assets/ObsiPulseIcon'
 import { DataviewCompiler } from './compilers/DataViewCompiler'
+import { PrivateModeModal } from './components/PrivateModeModal'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
 import { createProfileUrl } from './helpers/createProfileUrl'
 import { Encryption } from './helpers/Encryption'
@@ -49,7 +50,7 @@ class YourPulseSettingTab extends PluginSettingTab {
     // Check if license key is valid
     const isValidLicense = this.plugin.settings.key && parseLicenseKey(this.plugin.settings.key)
 
-    new Setting(containerEl)
+    const privateModeSetting = new Setting(containerEl)
       .setName('Private Mode')
       .setDesc('Hide your profile from public view and leaderboards')
       .addToggle((toggle) => {
@@ -58,16 +59,31 @@ class YourPulseSettingTab extends PluginSettingTab {
           .setDisabled(!isValidLicense)
           .onChange(async (value) => {
             this.plugin.settings.privateMode = value
+
+            this.plugin.updatePrivateModeVisualIndicators()
             await this.plugin.saveSettings()
           })
       })
-      .setClass('private-mode-setting')
-      .descEl.createEl('div', {
-        text: isValidLicense
-          ? '✅ Private mode is available with your license key.'
-          : '⚠️ This feature requires a valid license. Please purchase a license to enable private mode.',
-        cls: 'setting-item-description',
+
+    // if (!isValidLicense) {
+    //   privateModeSetting.setClass('private-mode-setting')
+    // }
+
+    // Add visual indicator if private mode is active
+    if (this.plugin.settings.privateMode) {
+      privateModeSetting.settingEl.classList.add('private-mode-active')
+      const indicator = privateModeSetting.settingEl.createEl('div', {
+        cls: 'private-mode-indicator',
+        attr: { title: 'Private mode is currently active' },
       })
+    }
+
+    privateModeSetting.descEl.createEl('div', {
+      text: isValidLicense
+        ? '✅ Private mode is available with your license key.'
+        : '⚠️ This feature requires a valid license. Please purchase a license to enable private mode.',
+      cls: 'setting-item-description',
+    })
 
     const licenceOptions = new Setting(containerEl)
       .setName('License key')
@@ -288,6 +304,14 @@ export default class YourPulse extends Plugin {
       this.openYourPulseProfile('obsidian-plugin-ribbon')
     })
 
+    // Add private mode styling to ribbon icon if active
+    if (this.settings.privateMode) {
+      const ribbonIcon = document.querySelector(`[aria-label="Open YourPulse Profile"]`)
+      if (ribbonIcon) {
+        ribbonIcon.classList.add('private-mode-active')
+      }
+    }
+
     if (this.settings.key) {
       try {
         const parsedKey = parseLicenseKey(this.settings.key)
@@ -348,7 +372,7 @@ export default class YourPulse extends Plugin {
 
     this.addCommand({
       id: 'obsipulse-open-profile',
-      name: 'Open public profile',
+      name: this.settings.privateMode ? 'Open private mode view' : 'Open public profile',
       callback: () => {
         this.openYourPulseProfile('obsidian-plugin-command')
       },
@@ -440,6 +464,11 @@ export default class YourPulse extends Plugin {
     this.statusBarEl = this.addStatusBarItem()
     this.statusBarEl.setAttribute('style', 'cursor: pointer')
 
+    // Add private mode visual indicator
+    if (this.settings.privateMode) {
+      this.statusBarEl.classList.add('private-mode-active')
+    }
+
     this.statusBarEl.onclick = () => {
       this.openYourPulseProfile('obsidian-plugin-statusbar')
     }
@@ -491,7 +520,39 @@ export default class YourPulse extends Plugin {
   }
 
   openYourPulseProfile(ref: string) {
-    window.open(createProfileUrl(this.settings.userId, ref), '_blank')
+    if (this.settings.privateMode) {
+      // Show modal instead of external redirect when private mode is active
+      this.showPrivateModeModal('hello')
+    } else {
+      // Normal behavior when private mode is disabled
+      window.open(createProfileUrl(this.settings.userId, ref), '_blank')
+    }
+  }
+
+  showPrivateModeModal(content: string = 'hello') {
+    const modal = new PrivateModeModal(this.app, content)
+    modal.open()
+  }
+
+  updatePrivateModeVisualIndicators() {
+    // Update status bar styling
+    if (this.statusBarEl) {
+      if (this.settings.privateMode) {
+        this.statusBarEl.classList.add('private-mode-active')
+      } else {
+        this.statusBarEl.classList.remove('private-mode-active')
+      }
+    }
+
+    // Update ribbon icon styling
+    const ribbonIcon = document.querySelector(`[aria-label="Open YourPulse Profile"]`)
+    if (ribbonIcon) {
+      if (this.settings.privateMode) {
+        ribbonIcon.classList.add('private-mode-active')
+      } else {
+        ribbonIcon.classList.remove('private-mode-active')
+      }
+    }
   }
 
   updatePluginList() {

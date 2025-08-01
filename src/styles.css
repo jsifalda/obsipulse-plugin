@@ -11,3 +11,109 @@
 .private-mode-setting .setting-item-control {
   pointer-events: none;
 }
+
+/* Private Mode Modal Styles */
+.private-mode-modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 400px;
+  min-width: 300px;
+}
+
+.private-mode-modal-header {
+  padding: 16px 20px 8px 20px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.private-mode-modal-header h2 {
+  margin: 0;
+  color: var(--text-normal);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.private-mode-modal-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.private-mode-modal-content p {
+  margin: 0;
+  color: var(--text-normal);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.private-mode-modal-footer {
+  padding: 8px 20px 16px 20px;
+  border-top: 1px solid var(--background-modifier-border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.private-mode-modal-footer button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.private-mode-modal-footer button:hover {
+  background: var(--background-secondary);
+}
+
+.private-mode-modal-footer button.mod-cta {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border-color: var(--interactive-accent);
+}
+
+.private-mode-modal-footer button.mod-cta:hover {
+  background: var(--interactive-accent-hover);
+}
+
+/* Private Mode Visual Indicators */
+.private-mode-active {
+  opacity: 0.8;
+  filter: grayscale(0.3);
+}
+
+.private-mode-active .status-bar-item {
+  border-left: 3px solid var(--text-warning);
+}
+
+.private-mode-active .clickable-icon {
+  opacity: 0.7;
+}
+
+.private-mode-active .clickable-icon:hover {
+  opacity: 1;
+}
+
+.private-mode-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-warning);
+  margin-right: 6px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
