@@ -1,6 +1,7 @@
 # Changelog
 
 ## 202501201435 - Updated README with Private Mode Documentation
+
 - Added Private Mode feature description to README features list
 - Added FAQ section explaining Private Mode security benefits
 - Documented that Private Mode can be activated with license key
@@ -8,6 +9,7 @@
 - Updated documentation for security-conscious users
 
 ## 202501201430
+
 - Updated private mode modal to be responsive with 80% width/height
 - Added viewport units (vw/vh) for responsive sizing
 - Set min/max constraints to prevent extreme sizes

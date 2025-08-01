@@ -8,13 +8,16 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 ## Features
 
 - **Gamify your writing** by tracking your daily writing streak.
-- **Compete with other Obsidian users** on a shared leaderboard.
 - **Gain valuable insights** into your writing habits.
+- **Private Mode**: Activate with your license key to ensure no data leaves your vault - perfect for privacy-conscious users who value their privacy.
+
+### Public Profile Features
+
+- **Compete with other Obsidian users** on a shared leaderboard.
 - **Share Your Progress** with a free public profile URL to share your writing journey with friends or colleagues.
 - Never answer the question **"What Obsidian plugins do you use?" → it's all on your profile.**
 - **Upload & share selected notes** (with support of **Dataview rendering**).
 - Seamlessly manage insights across multiple vaults.
-- **Private Mode**: Activate with your license key to ensure no data leaves your vault - perfect for security-conscious users who value their privacy.
 
 ## Usage
 
@@ -50,15 +53,15 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 ## FAQ
 
 - **How secure is my data with YourPulse?**
-  - We take your privacy seriously. No personal data from your vault is shared with us (it stays in your vault), plugin only collects your anonymised behavioural data points - such as the number of words written.
+  - We take your privacy seriously. No personal data from your vault is shared with us (it stays in your vault), plugin only collects your anonymised behavioural data points - such as the number of words written. (**If you are still concerned, you can activate Private Mode with your license key.**)
+- **Will YourPulse work with multiple Obsidian vaults?**
+  - Yes, YourPulse supports tracking across multiple vaults seamlessly.
 - **Can I use YourPulse offline?**
   - Yes, all features work offline, with sync occurring when you're back online.
 - **What network requests and why this plugin does?**
-  - YourPulse Plugins makes API calls to store meta data of your writing activity and the list of plugins you use. Nothing else, no third party tracking or analysis. **We don't send your note content anywhere without your permission!**
-- **Will YourPulse work with multiple Obsidian vaults?**
-  - Yes, YourPulse supports tracking across multiple vaults seamlessly.
+  - YourPulse Plugins makes API calls to store meta data of your writing activity and the list of plugins you use. Nothing else, no third party tracking or analysis. **We don't send your note content anywhere without your permission! (and when the Private Mode is enabled)**
 - **What is Private Mode?**
-  - Private Mode is a security feature that can be activated with your license key. When enabled, YourPulse operates completely offline - no data is sent outside your vault, ensuring maximum privacy for security-conscious users.
+  - Private Mode is a security feature that can be activated with your license key. When enabled, YourPulse operates completely offline - no data is sent outside your vault, ensuring maximum privacy for privacy-conscious users.
 
 ## License
 
