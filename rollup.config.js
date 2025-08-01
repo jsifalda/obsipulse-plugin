@@ -23,10 +23,7 @@ export default {
       transformMixedEsModules: true,
     }),
     postcss({
-      plugins: [
-        require('@tailwindcss/postcss'),
-        require('autoprefixer'),
-      ],
+      plugins: [require('@tailwindcss/postcss'), require('autoprefixer')],
       extract: false,
       inject: true,
     }),
