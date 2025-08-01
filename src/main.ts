@@ -13,6 +13,7 @@ import {
 } from 'obsidian'
 import { v4 as uuidv4 } from 'uuid'
 
+import { DeviceData, YourPulseSettings } from '@/lib/types'
 import { ObsiPulseIcon } from './assets/ObsiPulseIcon'
 import { DataviewCompiler } from './compilers/DataViewCompiler'
 import { PrivateModeModal } from './components/PrivateModeModal'
@@ -25,7 +26,6 @@ import { hasYpPublishFileProperty } from './helpers/isYpPublish'
 import { listAllPlugins } from './helpers/listAllPlugins'
 import './styles.css'
 import { ApiInterceptor } from './utils/apiInterceptor'
-import { DeviceData, YourPulseSettings } from '@/lib/types'
 
 const getTimezone = (): string | undefined => {
   try {
@@ -49,7 +49,7 @@ class YourPulseSettingTab extends PluginSettingTab {
     containerEl.empty()
 
     // Check if license key is valid
-    const isValidLicense = this.plugin.settings.key && parseLicenseKey(this.plugin.settings.key)
+    const isValidLicense = !!(this.plugin.settings.key && parseLicenseKey(this.plugin.settings.key))
 
     const privateModeSetting = new Setting(containerEl)
       .setName('Private Mode')
@@ -61,22 +61,13 @@ class YourPulseSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.privateMode = value
 
-            this.plugin.updatePrivateModeVisualIndicators()
             await this.plugin.saveSettings()
+            this.display()
           })
       })
 
-    // if (!isValidLicense) {
-    //   privateModeSetting.setClass('private-mode-setting')
-    // }
-
-    // Add visual indicator if private mode is active
-    if (this.plugin.settings.privateMode) {
-      privateModeSetting.settingEl.classList.add('private-mode-active')
-      const indicator = privateModeSetting.settingEl.createEl('div', {
-        cls: 'private-mode-indicator',
-        attr: { title: 'Private mode is currently active' },
-      })
+    if (!isValidLicense) {
+      privateModeSetting.setClass('private-mode-setting')
     }
 
     privateModeSetting.descEl.createEl('div', {
@@ -88,24 +79,30 @@ class YourPulseSettingTab extends PluginSettingTab {
 
     const licenceOptions = new Setting(containerEl)
       .setName('License key')
-      .setDesc('Get access to premium features including private mode')
-      .addText((text) =>
-        text
-          .setPlaceholder('Your license key here...')
-          .setValue(this.plugin.settings.key || '')
-          .onChange(async (value) => {
-            this.plugin.settings.key = value
-            await this.plugin.saveSettings()
+      .setDesc('Get access to premium features including private mode!')
 
-            const parsedKey = parseLicenseKey(value)
-            if (parsedKey) {
-              this.plugin.settings.userId = parsedKey.userId
-              this.plugin.updatePluginList()
-              // Refresh the settings display to update private mode toggle
-              this.display()
-            }
-          }),
-      )
+    licenceOptions.descEl.createEl('div', {
+      text: '(Please restart Obsidian after changing the key!!)',
+      cls: 'setting-item-description',
+    })
+
+    licenceOptions.addText((text) =>
+      text
+        .setPlaceholder('Your license key here...')
+        .setValue(this.plugin.settings.key || '')
+        .onChange(async (value) => {
+          this.plugin.settings.key = value
+          await this.plugin.saveSettings()
+
+          const parsedKey = parseLicenseKey(value)
+          if (parsedKey) {
+            this.plugin.settings.userId = parsedKey.userId
+            this.plugin.updatePluginList()
+            // Refresh the settings display to update private mode toggle
+            this.display()
+          }
+        }),
+    )
 
     if (!this.plugin.settings.key) {
       licenceOptions.addButton((button) => {
@@ -118,12 +115,15 @@ class YourPulseSettingTab extends PluginSettingTab {
       })
     }
 
-    new Setting(containerEl)
-      .setName('Files to be published')
-      .setDesc(
-        'List of files to be shared publicly via YourPulse.com profile (one per line). You can also mark a note for publishing by adding `yp-publish: true` to its file properties (frontmatter).',
-      )
-      .addTextArea((textArea) =>
+    if (!this.plugin.settings.privateMode) {
+      const filesOptions = new Setting(containerEl)
+        .setName('Files to be published')
+        .setDesc('List of files to be shared publicly via YourPulse.com profile (one per line).')
+      filesOptions.descEl.createEl('div', {
+        text: 'You can also mark a note for publishing by adding `yp-publish: true` to its file properties (frontmatter)',
+        cls: 'setting-item-description',
+      })
+      filesOptions.addTextArea((textArea) =>
         textArea
           .setPlaceholder('public-path.md\n/public-dir\n!/public-dir/not-public-path.md')
           .setValue(this.plugin.settings.publicPaths.join('\n'))
@@ -132,6 +132,7 @@ class YourPulseSettingTab extends PluginSettingTab {
             await this.plugin.saveData(this.plugin.settings)
           }),
       )
+    }
 
     new Setting(containerEl)
       .setName('Hide Status Bar Stats')
@@ -285,14 +286,6 @@ export default class YourPulse extends Plugin {
       this.openYourPulseProfile('obsidian-plugin-ribbon')
     })
 
-    // Add private mode styling to ribbon icon if active
-    if (this.settings.privateMode) {
-      const ribbonIcon = document.querySelector(`[aria-label="Open YourPulse Profile"]`)
-      if (ribbonIcon) {
-        ribbonIcon.classList.add('private-mode-active')
-      }
-    }
-
     if (this.settings.key) {
       try {
         const parsedKey = parseLicenseKey(this.settings.key)
@@ -400,6 +393,11 @@ export default class YourPulse extends Plugin {
         //   this.settings.publicPaths.includes(file.path),
         // )
 
+        if (this.settings.privateMode) {
+          console.log('[yourpulse] private mode, skipping file upload', file.path)
+          return
+        }
+
         if (
           this.settings.publicPaths.includes(file.path) ||
           (await hasYpPublishFileProperty(file, this.app))
@@ -460,13 +458,18 @@ export default class YourPulse extends Plugin {
 
   updateStatusBarText() {
     if (this.statusBarEl) {
-      this.statusBarEl.setText(
-        `YourPulse Rank: #${this.leaderboardPosition} (${this.currentWordCount || 0} words today)`,
-      )
-      this.statusBarEl.setAttribute(
-        'title',
-        `You rank #${this.leaderboardPosition} users today. (Click to open YourPulse profile)`,
-      )
+      if (this.leaderboardPosition) {
+        this.statusBarEl.setText(
+          `YourPulse Rank: #${this.leaderboardPosition} (${this.currentWordCount || 0} words today)`,
+        )
+        this.statusBarEl.setAttribute(
+          'title',
+          `You rank #${this.leaderboardPosition} users today. (Click to open YourPulse profile)`,
+        )
+      } else {
+        this.statusBarEl.setText(`YourPulse: ${this.currentWordCount || 0} words today`)
+        this.statusBarEl.setAttribute('title', '')
+      }
     }
   }
 
@@ -514,27 +517,6 @@ export default class YourPulse extends Plugin {
     // TODO: it should not be only this device?!
     const modal = new PrivateModeModal(this.app, this.settings.devices[this.deviceName])
     modal.open()
-  }
-
-  updatePrivateModeVisualIndicators() {
-    // Update status bar styling
-    if (this.statusBarEl) {
-      if (this.settings.privateMode) {
-        this.statusBarEl.classList.add('private-mode-active')
-      } else {
-        this.statusBarEl.classList.remove('private-mode-active')
-      }
-    }
-
-    // Update ribbon icon styling
-    const ribbonIcon = document.querySelector(`[aria-label="Open YourPulse Profile"]`)
-    if (ribbonIcon) {
-      if (this.settings.privateMode) {
-        ribbonIcon.classList.add('private-mode-active')
-      } else {
-        ribbonIcon.classList.remove('private-mode-active')
-      }
-    }
   }
 
   updatePluginList() {

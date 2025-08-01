@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { calculateDailyAverage, calculateInLastXDays, calculateStreak, parseDailyCounts } from '@/lib/stats'
 import { DeviceData } from '@/lib/types'
 import { convertObjectToArray } from '@/lib/utils'
-
 import * as Plot from '@observablehq/plot'
 import { Activity, Info } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
@@ -16,20 +15,24 @@ interface VaultDetailProps {
 }
 
 export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
-  const dailyCounts = convertObjectToArray(parseDailyCounts(data.dayCounts))
+  const dailyCounts = useMemo(() => {
+    return convertObjectToArray(parseDailyCounts(data.dayCounts))
+  }, [data.dayCounts])
 
-  const vault = {
-    count: dailyCounts.filter(({ value }) => value).length,
-    streak: calculateStreak(dailyCounts),
-    averages: {
-      daily: calculateDailyAverage(dailyCounts),
-    },
-    inLast: {
-      '7days': calculateInLastXDays(dailyCounts, 7),
-      '365days': calculateInLastXDays(dailyCounts, 365),
-    },
-    dailyCounts,
-  }
+  const vault = useMemo(() => {
+    return {
+      count: dailyCounts.filter(({ value }) => value).length,
+      streak: calculateStreak(dailyCounts),
+      averages: {
+        daily: calculateDailyAverage(dailyCounts),
+      },
+      inLast: {
+        '7days': calculateInLastXDays(dailyCounts, 7),
+        '365days': calculateInLastXDays(dailyCounts, 365),
+      },
+      dailyCounts,
+    }
+  }, [dailyCounts])
 
   const dailyCountsSorted = useMemo(() => {
     return dailyCounts.sort((a, b) => {

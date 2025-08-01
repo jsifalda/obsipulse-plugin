@@ -203,42 +203,4 @@
   background: var(--interactive-accent-hover);
 }
 
-/* Private Mode Visual Indicators */
-.private-mode-active {
-  opacity: 0.8;
-  filter: grayscale(0.3);
-}
 
-.private-mode-active .status-bar-item {
-  border-left: 3px solid var(--text-warning);
-}
-
-.private-mode-active .clickable-icon {
-  opacity: 0.7;
-}
-
-.private-mode-active .clickable-icon:hover {
-  opacity: 1;
-}
-
-.private-mode-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--text-warning);
-  margin-right: 6px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
-}
