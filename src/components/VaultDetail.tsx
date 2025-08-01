@@ -31,8 +31,6 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
     dailyCounts,
   }
 
-  console.log('---vault3', vault, dailyCounts)
-
   const dailyCountsSorted = useMemo(() => {
     return dailyCounts.sort((a, b) => {
       const aDate = new Date(a.date)
@@ -132,7 +130,7 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
               <CardTitle className="text-center">Streak</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <Badge variant="secondary">
+              <Badge>
                 <Activity className="size-4" />
                 &nbsp; {vault.streak} days
               </Badge>
@@ -143,7 +141,7 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
               <CardTitle className="text-center">Daily Average</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <Badge variant="secondary">
+              <Badge>
                 {/* <WholeWord className="size-4" /> &nbsp; */}
                 {vault.averages.daily} words
               </Badge>
@@ -181,12 +179,12 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
               })}
             </div>
             <div className="flex flex-col space-y-5">
-              <Card className="">
+              <Card>
                 <CardHeader>
                   <CardTitle className="text-center">Last 7 days</CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-center">
-                  <Badge variant="secondary">{vault.inLast['7days']} words</Badge>
+                  <Badge>{vault.inLast['7days']} words</Badge>
                 </CardContent>
               </Card>
               <Card>
@@ -194,7 +192,7 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
                   <CardTitle className="text-center">Last 365 days</CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-center">
-                  <Badge variant="secondary">{vault.inLast['365days']} words</Badge>
+                  <Badge>{vault.inLast['365days']} words</Badge>
                 </CardContent>
               </Card>
             </div>

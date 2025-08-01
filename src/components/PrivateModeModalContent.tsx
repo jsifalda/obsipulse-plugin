@@ -12,17 +12,11 @@ export const PrivateModeModalContent: React.FC<PrivateModeModalContentProps> = (
   return (
     <div className="private-mode-modal">
       <div className="private-mode-modal-header">
-        <h2>YourPulse - Private Mode</h2>
+        <h1 className="text-2xl font-bold">YourPulse - Private Mode</h1>
       </div>
 
       <div className="private-mode-modal-content">
-        <div>
-          <Card>
-            <CardContent>
-              <VaultDetail vault={data} />
-            </CardContent>
-          </Card>
-        </div>
+        <VaultDetail vault={data} />
       </div>
 
       {/* <div className="private-mode-modal-footer">
