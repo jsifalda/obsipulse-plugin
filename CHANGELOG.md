@@ -7,6 +7,7 @@
   - Removed Tailwind CSS dependencies: tailwindcss@^4.1.11, @tailwindcss/postcss@^4.1.11, tailwind-merge@^3.3.1, tw-animate-css@^1.3.6, autoprefixer@^10.4.14
   - Deleted tailwind.config.js configuration file
   - Updated rollup.config.js to remove Tailwind PostCSS plugin
+  - Removed Tailwind imports from src/styles.css and converted @apply directives to vanilla CSS
   - Converted Card component from Tailwind classes to vanilla CSS with yp- prefix
   - Converted Badge component from Tailwind classes to vanilla CSS with yp- prefix
   - Created card.css and badge.css files with CSS custom properties for theming

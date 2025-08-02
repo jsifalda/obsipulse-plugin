@@ -1,7 +1,4 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
-
-@custom-variant dark (&:is(.dark *));
+/* YourPulse Plugin Styles */
 
 :root {
   --background: oklch(1 0 0);
@@ -114,13 +111,16 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Base styles */
+* {
+  border-color: var(--border);
+  outline-color: var(--ring);
+  outline-opacity: 0.5;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .private-mode-setting {
