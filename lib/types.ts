@@ -16,6 +16,9 @@ export interface YourPulseSettings {
   timezone: string
   privateMode: boolean
   statusBarStats?: boolean
+  linkedNotesEnabled?: boolean
+  linkedNotesMaxDepth?: number
+  linkedNotesMaxContentSize?: number
 }
 
 export interface DailyCountItem {

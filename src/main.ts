@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { DeviceData, YourPulseSettings } from '@/lib/types'
 import { ObsiPulseIcon } from './assets/ObsiPulseIcon'
 import { DataviewCompiler } from './compilers/DataViewCompiler'
+import { LinkedNotesCompiler } from './compilers/LinkedNotesCompiler'
 import { PrivateModeModal } from './components/PrivateModeModal'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
 import { createProfileUrl } from './helpers/createProfileUrl'
@@ -146,6 +147,46 @@ class YourPulseSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings()
         })
       })
+
+    new Setting(containerEl)
+      .setName('Linked Notes Resolution')
+      .setDesc('Enable resolution of linked notes (![[note]]) before file upload')
+      .addToggle((toggle) => {
+        toggle.setValue(this.plugin.settings.linkedNotesEnabled ?? true).onChange(async (value) => {
+          this.plugin.settings.linkedNotesEnabled = value
+          await this.plugin.saveSettings()
+        })
+      })
+
+    if (this.plugin.settings.linkedNotesEnabled !== false) {
+      new Setting(containerEl)
+        .setName('Max Resolution Depth')
+        .setDesc('Maximum depth for resolving nested linked notes (default: 3)')
+        .addSlider((slider) => {
+          slider
+            .setLimits(1, 10, 1)
+            .setValue(this.plugin.settings.linkedNotesMaxDepth ?? 3)
+            .setDynamicTooltip()
+            .onChange(async (value) => {
+              this.plugin.settings.linkedNotesMaxDepth = value
+              await this.plugin.saveSettings()
+            })
+        })
+
+      new Setting(containerEl)
+        .setName('Max Content Size (MB)')
+        .setDesc('Maximum size for resolved note content in megabytes (default: 1MB)')
+        .addSlider((slider) => {
+          slider
+            .setLimits(0.1, 10, 0.1)
+            .setValue((this.plugin.settings.linkedNotesMaxContentSize ?? 1000000) / 1000000)
+            .setDynamicTooltip()
+            .onChange(async (value) => {
+              this.plugin.settings.linkedNotesMaxContentSize = Math.round(value * 1000000)
+              await this.plugin.saveSettings()
+            })
+        })
+    }
 
     new Setting(containerEl).setName('Version').setDesc(this.plugin.manifest.version)
     new Setting(containerEl).setName('User ID').setDesc(this.plugin.settings.userId)
@@ -404,9 +445,24 @@ export default class YourPulse extends Plugin {
         ) {
           const dataviewCompiler = new DataviewCompiler()
           const fileContent = await this.app.vault.read(file)
-          console.time('compile')
-          const compiledFile = await dataviewCompiler.compile(file)(fileContent)
-          console.timeEnd('compile')
+
+          let processedContent = fileContent
+
+          if (this.settings.linkedNotesEnabled !== false) {
+            const linkedNotesCompiler = new LinkedNotesCompiler(
+              this.app,
+              this.settings.linkedNotesMaxDepth ?? 3,
+              this.settings.linkedNotesMaxContentSize ?? 1000000,
+            )
+
+            console.time('linked-notes-compile')
+            processedContent = await linkedNotesCompiler.compile(file)(fileContent)
+            console.timeEnd('linked-notes-compile')
+          }
+
+          console.time('dataview-compile')
+          const compiledFile = await dataviewCompiler.compile(file)(processedContent)
+          console.timeEnd('dataview-compile')
 
           const hash = encodeURIComponent(file.path)
           const toSync = { stat: file.stat, content: compiledFile, path: file.path }

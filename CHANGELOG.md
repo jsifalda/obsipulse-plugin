@@ -1,5 +1,22 @@
 # Changelog
 
+## 202501201500 - Implemented Linked Notes Resolution Feature
+
+- **Why**: Resolve `![[note]]` references before file upload to make published content self-contained and more readable
+- **Changes**:
+  - Created LinkedNotesCompiler class following DataViewCompiler pattern with linked notes detection using regex pattern `!\[\[note\]\]`
+  - Added file content reading functionality using Obsidian API with circular reference detection to prevent infinite loops
+  - Implemented error handling for missing or deleted linked notes with content replacement logic
+  - Added recursive resolution for nested linked notes with depth limiting to prevent excessive recursion
+  - Integrated LinkedNotesCompiler into main upload pipeline before DataViewCompiler for proper processing order
+  - Added performance monitoring with console.time for linked notes resolution
+  - Implemented memoization to avoid repeated resolution of same notes and content size limits to prevent performance issues
+  - Added user configuration options: enable/disable linked notes resolution, maximum resolution depth (1-10), and content size limits (0.1-10MB)
+  - Created linkedNotesHelpers utility functions for note detection, file finding, content reading, and circular reference detection
+  - Updated YourPulseSettings interface to include linkedNotesEnabled, linkedNotesMaxDepth, and linkedNotesMaxContentSize options
+  - Added settings UI with toggle for linked notes resolution and sliders for depth and content size configuration
+- **Dependencies**: No new dependencies added (uses existing Obsidian API)
+
 ## 202501201435 - Updated README with Private Mode Documentation
 
 - Added Private Mode feature description to README features list
