@@ -337,13 +337,6 @@ export default class YourPulse extends Plugin {
       }, 60000),
     )
 
-    if (this.app.workspace.layoutReady) {
-      this.initLeaf()
-    } else {
-      // @ts-ignore
-      this.registerEvent(this.app.workspace.on('layout-ready', this.initLeaf.bind(this)))
-    }
-
     this.addCommand({
       id: 'obsipulse-open-profile',
       name: this.settings.privateMode ? 'Open private mode view' : 'Open public profile',
@@ -529,19 +522,13 @@ export default class YourPulse extends Plugin {
     }
   }
 
-  initLeaf(): void {
-    if (this.app.workspace.getLeavesOfType(VIEW_TYPE_STATS_TRACKER).length) {
-      return
-    }
-  }
-
   onQuickPreview(file: TFile, contents: string) {
     if (this.app.workspace.getActiveViewOfType(MarkdownView)) {
       this.debouncedUpdate(contents, file.path)
     }
   }
 
-  //Credit: better-word-count by Luke Leppan (https://github.com/lukeleppan/better-word-count)
+  //Inspired by https://github.com/lukeleppan/better-word-count
   getWordCount(text: string) {
     let words: number = 0
 
@@ -694,11 +681,6 @@ export default class YourPulse extends Plugin {
         // @ts-ignore - Handling old format migration
         this.settings.devices[deviceName].todaysWordCount = this.settings.todaysWordCount
       }
-
-      // // @ts-ignore - Cleanup old format
-      // delete this.settings.dayCounts
-      // // @ts-ignore - Cleanup old format
-      // delete this.settings.todaysWordCount
     }
   }
 
