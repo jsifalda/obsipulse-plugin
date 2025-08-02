@@ -222,6 +222,9 @@ const DEFAULT_SETTINGS: YourPulseSettings = {
   timezone: getTimezone(),
   privateMode: false,
   statusBarStats: true,
+  linkedNotesEnabled: true,
+  linkedNotesMaxDepth: 1,
+  linkedNotesMaxContentSize: 1000000,
 }
 
 interface ParsedLicenseKey {
@@ -451,7 +454,7 @@ export default class YourPulse extends Plugin {
           if (this.settings.linkedNotesEnabled !== false) {
             const linkedNotesCompiler = new LinkedNotesCompiler(
               this.app,
-              this.settings.linkedNotesMaxDepth ?? 3,
+              this.settings.linkedNotesMaxDepth ?? 1,
               this.settings.linkedNotesMaxContentSize ?? 1000000,
             )
 
