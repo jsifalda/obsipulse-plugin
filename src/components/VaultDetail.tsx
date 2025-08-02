@@ -120,44 +120,45 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
         <div className="yp-md-mb-0">
           <h2 className="yp-text-xl yp-font-bold yp-mb-5">Contributions in last year</h2>
           <div {...{ ref }}></div>
-          {dailyCountsSorted.length ? (
+          {/* {dailyCountsSorted.length ? (
             <p className="yp-text-xs yp-text-muted-foreground yp-mt-0 yp-mb-3 yp-flex yp-items-center yp-gap-1">
               <Info className="yp-h-4 yp-w-4" />
               Tip: Hover over cells to see word count details
             </p>
-          ) : null}
+          ) : null} */}
         </div>
-        <div className="yp-flex yp-flex-col yp-space-y-5">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center">Streak</CardTitle>
-            </CardHeader>
-            <CardContent className="yp-flex yp-justify-center">
-              <Badge>
-                <Activity className="yp-size-4" />
-                &nbsp; {vault.streak} days
-              </Badge>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="yp-text-center">Daily Average</CardTitle>
-            </CardHeader>
-            <CardContent className="yp-flex yp-justify-center">
-              <Badge>
-                {/* <WholeWord className="size-4" /> &nbsp; */}
-                {vault.averages.daily} words
-              </Badge>
-            </CardContent>
-          </Card>
-        </div>
+      </div>
+
+      <div className="yp-flex yp-flex-row yp-mt-5 yp-justify-between">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center">Streak</CardTitle>
+          </CardHeader>
+          <CardContent className="yp-flex yp-justify-center">
+            <Badge>
+              <Activity className="yp-size-4" />
+              &nbsp; {vault.streak} days
+            </Badge>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="yp-text-center">Daily Average</CardTitle>
+          </CardHeader>
+          <CardContent className="yp-flex yp-justify-center">
+            <Badge>
+              {/* <WholeWord className="size-4" /> &nbsp; */}
+              {vault.averages.daily} words
+            </Badge>
+          </CardContent>
+        </Card>
       </div>
 
       <h2 className="yp-text-xl yp-font-bold yp-mt-5 yp-mb-5">Contributions activity</h2>
       <div
         className={
           dailyCountsSorted.length > MAX_DAILY_HALF_COUNT
-            ? 'yp-flex yp-flex-col yp-md-flex-row yp-justify-between'
+            ? 'yp-flex yp-flex-col yp-justify-between'
             : 'yp-flex yp-flex-row yp-justify-between'
         }
       >
@@ -181,24 +182,6 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
                 )
               })}
             </div>
-            <div className="yp-flex yp-flex-col yp-space-y-5">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="yp-text-center">Last 7 days</CardTitle>
-                </CardHeader>
-                <CardContent className="yp-flex yp-justify-center">
-                  <Badge>{vault.inLast['7days']} words</Badge>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="yp-text-center">Last 365 days</CardTitle>
-                </CardHeader>
-                <CardContent className="yp-flex yp-justify-center">
-                  <Badge>{vault.inLast['365days']} words</Badge>
-                </CardContent>
-              </Card>
-            </div>
           </>
         )}
       </div>
@@ -208,6 +191,25 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
           Showing only the last {MAX_DAILY_COUNT} items out of {dailyCountsSorted.length} contributions.
         </div>
       )}
+
+      <div className="yp-flex yp-flex-row yp-justify-between yp-mt-5">
+        <Card>
+          <CardHeader>
+            <CardTitle className="yp-text-center">Last 7 days</CardTitle>
+          </CardHeader>
+          <CardContent className="yp-flex yp-justify-center">
+            <Badge>{vault.inLast['7days']} words</Badge>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="yp-text-center">Last 365 days</CardTitle>
+          </CardHeader>
+          <CardContent className="yp-flex yp-justify-center">
+            <Badge>{vault.inLast['365days']} words</Badge>
+          </CardContent>
+        </Card>
+      </div>
     </>
   )
 }
