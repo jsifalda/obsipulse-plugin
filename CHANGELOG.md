@@ -1,5 +1,34 @@
 # Changelog
 
+## 202501201510 - Removed Max Content Limit for Internal Link Resolver
+
+- **Why**: Remove content size restrictions to allow unlimited note content resolution for better linked notes functionality
+- **Changes**:
+  - Removed maxContentSize parameter from LinkedNotesCompiler constructor
+  - Removed isContentTooLarge check from note resolution process
+  - Removed linkedNotesMaxContentSize setting from YourPulseSettings interface
+  - Removed Max Content Size slider from settings UI
+  - Updated LinkedNotesCompiler to process notes without size limitations
+  - Removed setMaxContentSize method from LinkedNotesCompiler class
+- **Dependencies**: No new dependencies added (removed content size restrictions)
+
+## 202501201500 - Implemented Linked Notes Resolution Feature
+
+- **Why**: Resolve `![[note]]` references before file upload to make published content self-contained and more readable
+- **Changes**:
+  - Created LinkedNotesCompiler class following DataViewCompiler pattern with linked notes detection using regex pattern `!\[\[note\]\]`
+  - Added file content reading functionality using Obsidian API with circular reference detection to prevent infinite loops
+  - Implemented error handling for missing or deleted linked notes with content replacement logic
+  - Added recursive resolution for nested linked notes with depth limiting to prevent excessive recursion
+  - Integrated LinkedNotesCompiler into main upload pipeline before DataViewCompiler for proper processing order
+  - Added performance monitoring with console.time for linked notes resolution
+  - Implemented memoization to avoid repeated resolution of same notes and content size limits to prevent performance issues
+  - Added user configuration options: enable/disable linked notes resolution, maximum resolution depth (1-10), and content size limits (0.1-10MB)
+  - Created linkedNotesHelpers utility functions for note detection, file finding, content reading, and circular reference detection
+  - Updated YourPulseSettings interface to include linkedNotesEnabled, linkedNotesMaxDepth, and linkedNotesMaxContentSize options
+  - Added settings UI with toggle for linked notes resolution and sliders for depth and content size configuration
+- **Dependencies**: No new dependencies added (uses existing Obsidian API)
+
 ## 202501201435 - Updated README with Private Mode Documentation
 
 - Added Private Mode feature description to README features list
@@ -50,5 +79,11 @@
 - Created PrivateModeModalContent.tsx React component for modal content
 - Modified PrivateModeModal.ts to use React rendering instead of vanilla DOM
 - Added @types/react dependency for TypeScript React support
+
+## 202501191200 - Created PRD for Linked Notes Resolution Feature
+
+- **Why**: User requested feature to resolve `![[note]]` references before file upload to make published content self-contained and more readable
+- **Changes**: Created comprehensive PRD document outlining linked notes resolution functionality
+- **Dependencies**: No new dependencies added (PRD only)
 
 ## Previous changes...

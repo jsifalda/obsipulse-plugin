@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { DeviceData, YourPulseSettings } from '@/lib/types'
 import { ObsiPulseIcon } from './assets/ObsiPulseIcon'
 import { DataviewCompiler } from './compilers/DataViewCompiler'
+import { LinkedNotesCompiler } from './compilers/LinkedNotesCompiler'
 import { PrivateModeModal } from './components/PrivateModeModal'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
 import { createProfileUrl } from './helpers/createProfileUrl'
@@ -115,6 +116,19 @@ class YourPulseSettingTab extends PluginSettingTab {
       })
     }
 
+    new Setting(containerEl)
+      .setName('Hide Status Bar Stats')
+      .setDesc(
+        'Hide the status bar stats for this plugin. Useful if you want to keep your workspace clean and distraction-free.',
+      )
+      .addToggle((toggle) => {
+        toggle.setValue(!this.plugin.settings.statusBarStats).onChange(async (value) => {
+          this.plugin.settings.statusBarStats = !value
+          this.plugin.updateStatusBarIfNeeded()
+          await this.plugin.saveSettings()
+        })
+      })
+
     if (!this.plugin.settings.privateMode) {
       const filesOptions = new Setting(containerEl)
         .setName('Files to be published')
@@ -132,20 +146,35 @@ class YourPulseSettingTab extends PluginSettingTab {
             await this.plugin.saveData(this.plugin.settings)
           }),
       )
-    }
 
-    new Setting(containerEl)
-      .setName('Hide Status Bar Stats')
-      .setDesc(
-        'Hide the status bar stats for this plugin. Useful if you want to keep your workspace clean and distraction-free.',
-      )
-      .addToggle((toggle) => {
-        toggle.setValue(!this.plugin.settings.statusBarStats).onChange(async (value) => {
-          this.plugin.settings.statusBarStats = !value
-          this.plugin.updateStatusBarIfNeeded()
-          await this.plugin.saveSettings()
+      new Setting(containerEl)
+        .setName('Linked Notes Resolution')
+        .setDesc('Enable resolution of linked notes (![[note]]) before file upload')
+        .addToggle((toggle) => {
+          toggle.setValue(this.plugin.settings.linkedNotesEnabled ?? true).onChange(async (value) => {
+            this.plugin.settings.linkedNotesEnabled = value
+            await this.plugin.saveSettings()
+          })
         })
-      })
+
+      if (this.plugin.settings.linkedNotesEnabled !== false) {
+        new Setting(containerEl)
+          .setName('Max Resolution Depth')
+          .setDesc(
+            `Maximum depth for resolving nested linked notes (default: ${DEFAULT_SETTINGS.linkedNotesMaxDepth})`,
+          )
+          .addSlider((slider) => {
+            slider
+              .setLimits(1, 10, 1)
+              .setValue(this.plugin.settings.linkedNotesMaxDepth ?? DEFAULT_SETTINGS.linkedNotesMaxDepth)
+              .setDynamicTooltip()
+              .onChange(async (value) => {
+                this.plugin.settings.linkedNotesMaxDepth = value
+                await this.plugin.saveSettings()
+              })
+          })
+      }
+    }
 
     new Setting(containerEl).setName('Version').setDesc(this.plugin.manifest.version)
     new Setting(containerEl).setName('User ID').setDesc(this.plugin.settings.userId)
@@ -181,6 +210,8 @@ const DEFAULT_SETTINGS: YourPulseSettings = {
   timezone: getTimezone(),
   privateMode: false,
   statusBarStats: true,
+  linkedNotesEnabled: true,
+  linkedNotesMaxDepth: 1,
 }
 
 interface ParsedLicenseKey {
@@ -404,9 +435,23 @@ export default class YourPulse extends Plugin {
         ) {
           const dataviewCompiler = new DataviewCompiler()
           const fileContent = await this.app.vault.read(file)
-          console.time('compile')
-          const compiledFile = await dataviewCompiler.compile(file)(fileContent)
-          console.timeEnd('compile')
+
+          let processedContent = fileContent
+
+          if (this.settings.linkedNotesEnabled !== false) {
+            const linkedNotesCompiler = new LinkedNotesCompiler(
+              this.app,
+              this.settings.linkedNotesMaxDepth ?? 1,
+            )
+
+            console.time('linked-notes-compile')
+            processedContent = await linkedNotesCompiler.compile(file)(fileContent)
+            console.timeEnd('linked-notes-compile')
+          }
+
+          console.time('dataview-compile')
+          const compiledFile = await dataviewCompiler.compile(file)(processedContent)
+          console.timeEnd('dataview-compile')
 
           const hash = encodeURIComponent(file.path)
           const toSync = { stat: file.stat, content: compiledFile, path: file.path }
@@ -541,7 +586,7 @@ export default class YourPulse extends Plugin {
     }
   }
 
-  //Credit: better-word-count by Luke Leppan (https://github.com/lukeleppan/better-word-count)
+  //Inspired by https://github.com/lukeleppan/better-word-count
   getWordCount(text: string) {
     let words: number = 0
 
@@ -694,11 +739,6 @@ export default class YourPulse extends Plugin {
         // @ts-ignore - Handling old format migration
         this.settings.devices[deviceName].todaysWordCount = this.settings.todaysWordCount
       }
-
-      // // @ts-ignore - Cleanup old format
-      // delete this.settings.dayCounts
-      // // @ts-ignore - Cleanup old format
-      // delete this.settings.todaysWordCount
     }
   }
 
