@@ -116,6 +116,19 @@ class YourPulseSettingTab extends PluginSettingTab {
       })
     }
 
+    new Setting(containerEl)
+      .setName('Hide Status Bar Stats')
+      .setDesc(
+        'Hide the status bar stats for this plugin. Useful if you want to keep your workspace clean and distraction-free.',
+      )
+      .addToggle((toggle) => {
+        toggle.setValue(!this.plugin.settings.statusBarStats).onChange(async (value) => {
+          this.plugin.settings.statusBarStats = !value
+          this.plugin.updateStatusBarIfNeeded()
+          await this.plugin.saveSettings()
+        })
+      })
+
     if (!this.plugin.settings.privateMode) {
       const filesOptions = new Setting(containerEl)
         .setName('Files to be published')
@@ -133,49 +146,34 @@ class YourPulseSettingTab extends PluginSettingTab {
             await this.plugin.saveData(this.plugin.settings)
           }),
       )
-    }
 
-    new Setting(containerEl)
-      .setName('Hide Status Bar Stats')
-      .setDesc(
-        'Hide the status bar stats for this plugin. Useful if you want to keep your workspace clean and distraction-free.',
-      )
-      .addToggle((toggle) => {
-        toggle.setValue(!this.plugin.settings.statusBarStats).onChange(async (value) => {
-          this.plugin.settings.statusBarStats = !value
-          this.plugin.updateStatusBarIfNeeded()
-          await this.plugin.saveSettings()
-        })
-      })
-
-    new Setting(containerEl)
-      .setName('Linked Notes Resolution')
-      .setDesc('Enable resolution of linked notes (![[note]]) before file upload')
-      .addToggle((toggle) => {
-        toggle.setValue(this.plugin.settings.linkedNotesEnabled ?? true).onChange(async (value) => {
-          this.plugin.settings.linkedNotesEnabled = value
-          await this.plugin.saveSettings()
-        })
-      })
-
-    if (this.plugin.settings.linkedNotesEnabled !== false) {
       new Setting(containerEl)
-        .setName('Max Resolution Depth')
-        .setDesc(
-          `Maximum depth for resolving nested linked notes (default: ${DEFAULT_SETTINGS.linkedNotesMaxDepth})`,
-        )
-        .addSlider((slider) => {
-          slider
-            .setLimits(1, 10, 1)
-            .setValue(this.plugin.settings.linkedNotesMaxDepth ?? DEFAULT_SETTINGS.linkedNotesMaxDepth)
-            .setDynamicTooltip()
-            .onChange(async (value) => {
-              this.plugin.settings.linkedNotesMaxDepth = value
-              await this.plugin.saveSettings()
-            })
+        .setName('Linked Notes Resolution')
+        .setDesc('Enable resolution of linked notes (![[note]]) before file upload')
+        .addToggle((toggle) => {
+          toggle.setValue(this.plugin.settings.linkedNotesEnabled ?? true).onChange(async (value) => {
+            this.plugin.settings.linkedNotesEnabled = value
+            await this.plugin.saveSettings()
+          })
         })
 
-
+      if (this.plugin.settings.linkedNotesEnabled !== false) {
+        new Setting(containerEl)
+          .setName('Max Resolution Depth')
+          .setDesc(
+            `Maximum depth for resolving nested linked notes (default: ${DEFAULT_SETTINGS.linkedNotesMaxDepth})`,
+          )
+          .addSlider((slider) => {
+            slider
+              .setLimits(1, 10, 1)
+              .setValue(this.plugin.settings.linkedNotesMaxDepth ?? DEFAULT_SETTINGS.linkedNotesMaxDepth)
+              .setDynamicTooltip()
+              .onChange(async (value) => {
+                this.plugin.settings.linkedNotesMaxDepth = value
+                await this.plugin.saveSettings()
+              })
+          })
+      }
     }
 
     new Setting(containerEl).setName('Version').setDesc(this.plugin.manifest.version)
