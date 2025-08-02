@@ -1,0 +1,18 @@
+{
+  // https://github.com/markdownlint/markdownlint/blob/main/docs/RULES.md
+  "default": true,
+  // Trailing spaces
+  "MD009": false,
+  // Line length (default: 80)
+  "MD013": false,
+  // Duplicate headings (e.g., nested headings)
+  "MD024": false,
+  // Ordered list item prefix
+  "MD029": {
+    "style": "ordered"
+  },
+  // Fenced code blocks should be surrounded by blank lines
+  "MD031": false,
+  // Emphasis as heading (e.g., table of contents)
+  "MD036": false
+}
