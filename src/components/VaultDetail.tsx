@@ -116,34 +116,34 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row justify-between mt-5">
-        <div className="md:mb-0">
-          <h2 className="text-xl font-bold mb-5">Contributions in last year</h2>
+      <div className="yp-flex yp-flex-col yp-md-flex-row yp-justify-between yp-mt-5">
+        <div className="yp-md-mb-0">
+          <h2 className="yp-text-xl yp-font-bold yp-mb-5">Contributions in last year</h2>
           <div {...{ ref }}></div>
           {dailyCountsSorted.length ? (
-            <p className="text-xs text-muted-foreground mt-0 mb-3 flex items-center gap-1">
-              <Info className="h-4 w-4" />
+            <p className="yp-text-xs yp-text-muted-foreground yp-mt-0 yp-mb-3 yp-flex yp-items-center yp-gap-1">
+              <Info className="yp-h-4 yp-w-4" />
               Tip: Hover over cells to see word count details
             </p>
           ) : null}
         </div>
-        <div className="flex flex-col space-y-5">
+        <div className="yp-flex yp-flex-col yp-space-y-5">
           <Card>
             <CardHeader>
               <CardTitle className="text-center">Streak</CardTitle>
             </CardHeader>
-            <CardContent className="flex justify-center">
+            <CardContent className="yp-flex yp-justify-center">
               <Badge>
-                <Activity className="size-4" />
+                <Activity className="yp-size-4" />
                 &nbsp; {vault.streak} days
               </Badge>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="text-center">Daily Average</CardTitle>
+              <CardTitle className="yp-text-center">Daily Average</CardTitle>
             </CardHeader>
-            <CardContent className="flex justify-center">
+            <CardContent className="yp-flex yp-justify-center">
               <Badge>
                 {/* <WholeWord className="size-4" /> &nbsp; */}
                 {vault.averages.daily} words
@@ -153,48 +153,48 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
         </div>
       </div>
 
-      <h2 className="text-xl font-bold mt-5 mb-5">Contributions activity</h2>
+      <h2 className="yp-text-xl yp-font-bold yp-mt-5 yp-mb-5">Contributions activity</h2>
       <div
         className={
           dailyCountsSorted.length > MAX_DAILY_HALF_COUNT
-            ? 'flex flex-col md:flex-row justify-between'
-            : 'flex flex-row justify-between'
+            ? 'yp-flex yp-flex-col yp-md-flex-row yp-justify-between'
+            : 'yp-flex yp-flex-row yp-justify-between'
         }
       >
         {dailyCountsSorted.length === 0 ? (
-          <div className=" text-gray-500">No contributions yet.</div>
+          <div className="yp-text-gray-500">No contributions yet.</div>
         ) : (
           <>
             <div
               className={
                 dailyCountsSorted.length > MAX_DAILY_HALF_COUNT
-                  ? 'grid grid-cols-1 md:grid-cols-2 gap-1'
-                  : 'grid grid-cols-1 gap-1'
+                  ? 'yp-grid yp-grid-cols-1 yp-md-grid-cols-2 yp-gap-1'
+                  : 'yp-grid yp-grid-cols-1 yp-gap-1'
               }
             >
               {dailyCountsSorted.slice(0, MAX_DAILY_COUNT).map((item) => {
                 return (
-                  <div key={item.key} className="flex justify-left">
-                    <div className="pl-2">{item.key}:</div>
-                    <div className="pl-2">{item.value}</div>
+                  <div key={item.key} className="yp-flex yp-justify-left">
+                    <div className="yp-pl-2">{item.key}:</div>
+                    <div className="yp-pl-2">{item.value}</div>
                   </div>
                 )
               })}
             </div>
-            <div className="flex flex-col space-y-5">
+            <div className="yp-flex yp-flex-col yp-space-y-5">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-center">Last 7 days</CardTitle>
+                  <CardTitle className="yp-text-center">Last 7 days</CardTitle>
                 </CardHeader>
-                <CardContent className="flex justify-center">
+                <CardContent className="yp-flex yp-justify-center">
                   <Badge>{vault.inLast['7days']} words</Badge>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-center">Last 365 days</CardTitle>
+                  <CardTitle className="yp-text-center">Last 365 days</CardTitle>
                 </CardHeader>
-                <CardContent className="flex justify-center">
+                <CardContent className="yp-flex yp-justify-center">
                   <Badge>{vault.inLast['365days']} words</Badge>
                 </CardContent>
               </Card>
@@ -204,7 +204,7 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
       </div>
 
       {dailyCountsSorted.length > MAX_DAILY_COUNT && (
-        <div className="text-sm text-gray-500 mt-2 col-span-2">
+        <div className="yp-text-sm yp-text-gray-500 yp-mt-2 yp-col-span-2">
           Showing only the last {MAX_DAILY_COUNT} items out of {dailyCountsSorted.length} contributions.
         </div>
       )}

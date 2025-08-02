@@ -13,6 +13,8 @@
   - Created card.css and badge.css files with direct color values instead of CSS variables
   - Updated lib/utils.ts to remove tailwind-merge dependency from cn function
   - Cleaned up src/styles.css by removing all color CSS variables and @theme inline section
+  - Added comprehensive utility classes to styles.css with yp- prefix for flex, text, margin, padding, and grid
+  - Updated VaultDetail.tsx to use yp- prefixed utility classes instead of Tailwind classes
   - Maintained all component APIs, variants, and functionality
   - Preserved accessibility features and responsive behavior
   - Simplified CSS structure with direct color values and explicit dark theme selectors
