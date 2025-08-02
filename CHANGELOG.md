@@ -1,5 +1,21 @@
 # Changelog
 
+## 202501201520 - Removed Tailwind CSS Dependencies and Converted to Vanilla CSS
+
+- **Why**: Eliminate Tailwind CSS dependency to reduce bundle size, improve performance, and eliminate potential conflicts with Obsidian's CSS system
+- **Changes**:
+  - Removed Tailwind CSS dependencies: tailwindcss@^4.1.11, @tailwindcss/postcss@^4.1.11, tailwind-merge@^3.3.1, tw-animate-css@^1.3.6, autoprefixer@^10.4.14
+  - Deleted tailwind.config.js configuration file
+  - Updated rollup.config.js to remove Tailwind PostCSS plugin
+  - Converted Card component from Tailwind classes to vanilla CSS with yp- prefix
+  - Converted Badge component from Tailwind classes to vanilla CSS with yp- prefix
+  - Created card.css and badge.css files with CSS custom properties for theming
+  - Updated lib/utils.ts to remove tailwind-merge dependency from cn function
+  - Maintained all component APIs, variants, and functionality
+  - Added CSS custom properties for light/dark theme support
+  - Preserved accessibility features and responsive behavior
+- **Dependencies**: Removed tailwindcss, @tailwindcss/postcss, tailwind-merge, tw-animate-css, autoprefixer
+
 ## 202501201510 - Removed Max Content Limit for Internal Link Resolver
 
 - **Why**: Remove content size restrictions to allow unlimited note content resolution for better linked notes functionality
