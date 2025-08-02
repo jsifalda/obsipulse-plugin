@@ -17,6 +17,7 @@ More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 - **Share Your Progress** with a free public profile URL to share your writing journey with friends or colleagues.
 - Never answer the question **"What Obsidian plugins do you use?" → it's all on your profile.**
 - **Upload & share selected notes** (with support of **Dataview rendering**).
+- **Linked Notes Resolution**: Automatically resolves `![[note]]` references before upload, ensuring published content is complete and self-contained.
 - Seamlessly manage insights across multiple vaults.
 
 ## Usage
