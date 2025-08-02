@@ -10,11 +10,12 @@
   - Removed Tailwind imports from src/styles.css and converted @apply directives to vanilla CSS
   - Converted Card component from Tailwind classes to vanilla CSS with yp- prefix
   - Converted Badge component from Tailwind classes to vanilla CSS with yp- prefix
-  - Created card.css and badge.css files with CSS custom properties for theming
+  - Created card.css and badge.css files with direct color values instead of CSS variables
   - Updated lib/utils.ts to remove tailwind-merge dependency from cn function
+  - Cleaned up src/styles.css by removing all color CSS variables and @theme inline section
   - Maintained all component APIs, variants, and functionality
-  - Added CSS custom properties for light/dark theme support
   - Preserved accessibility features and responsive behavior
+  - Simplified CSS structure with direct color values and explicit dark theme selectors
 - **Dependencies**: Removed tailwindcss, @tailwindcss/postcss, tailwind-merge, tw-animate-css, autoprefixer
 
 ## 202501201510 - Removed Max Content Limit for Internal Link Resolver

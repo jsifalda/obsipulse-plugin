@@ -27,97 +27,110 @@
 
 /* Badge variants */
 .yp-badge-default {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+  background-color: #171717;
+  color: #ffffff;
   border-color: transparent;
 }
 
 .yp-badge-default:hover {
-  background-color: var(--primary-hover);
+  background-color: #404040;
 }
 
 .yp-badge-secondary {
-  background-color: var(--secondary);
-  color: var(--secondary-foreground);
+  background-color: #f5f5f5;
+  color: #171717;
   border-color: transparent;
 }
 
 .yp-badge-secondary:hover {
-  background-color: var(--secondary-hover);
+  background-color: #e5e5e5;
 }
 
 .yp-badge-destructive {
-  background-color: var(--destructive);
+  background-color: #ef4444;
   color: white;
   border-color: transparent;
 }
 
 .yp-badge-destructive:hover {
-  background-color: var(--destructive-hover);
+  background-color: #dc2626;
 }
 
 .yp-badge-outline {
-  color: var(--foreground);
-  border-color: var(--border);
+  color: #171717;
+  border-color: #e5e5e5;
   background-color: transparent;
 }
 
 .yp-badge-outline:hover {
-  background-color: var(--accent);
-  color: var(--accent-foreground);
+  background-color: #f5f5f5;
+  color: #171717;
 }
 
 /* Focus states */
 .yp-badge:focus-visible {
   outline: none;
-  border-color: var(--ring);
-  box-shadow: 0 0 0 3px var(--ring-opacity);
+  border-color: #171717;
+  box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.5);
 }
 
 .yp-badge-destructive:focus-visible {
-  box-shadow: 0 0 0 3px var(--destructive-ring);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
 }
 
 /* Invalid states */
 .yp-badge[aria-invalid='true'] {
-  border-color: var(--destructive);
-  box-shadow: 0 0 0 1px var(--destructive-ring);
-}
-
-/* CSS Custom Properties for theming */
-:root {
-  --primary: #171717;
-  --primary-foreground: #ffffff;
-  --primary-hover: #404040;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #171717;
-  --secondary-hover: #e5e5e5;
-  --destructive: #ef4444;
-  --destructive-hover: #dc2626;
-  --destructive-ring: rgba(239, 68, 68, 0.2);
-  --accent: #f5f5f5;
-  --accent-foreground: #171717;
-  --ring: #171717;
-  --ring-opacity: rgba(23, 23, 23, 0.5);
-  --foreground: #171717;
-  --border: #e5e5e5;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
 }
 
 /* Dark theme support */
-[data-theme='dark'] {
-  --primary: #ededed;
-  --primary-foreground: #171717;
-  --primary-hover: #d4d4d4;
-  --secondary: #262626;
-  --secondary-foreground: #ededed;
-  --secondary-hover: #404040;
-  --destructive: #f87171;
-  --destructive-hover: #ef4444;
-  --destructive-ring: rgba(248, 113, 113, 0.4);
-  --accent: #262626;
-  --accent-foreground: #ededed;
-  --ring: #ededed;
-  --ring-opacity: rgba(237, 237, 237, 0.5);
-  --foreground: #ededed;
-  --border: #404040;
+[data-theme='dark'] .yp-badge-default {
+  background-color: #ededed;
+  color: #171717;
+}
+
+[data-theme='dark'] .yp-badge-default:hover {
+  background-color: #d4d4d4;
+}
+
+[data-theme='dark'] .yp-badge-secondary {
+  background-color: #262626;
+  color: #ededed;
+}
+
+[data-theme='dark'] .yp-badge-secondary:hover {
+  background-color: #404040;
+}
+
+[data-theme='dark'] .yp-badge-destructive {
+  background-color: #f87171;
+}
+
+[data-theme='dark'] .yp-badge-destructive:hover {
+  background-color: #ef4444;
+}
+
+[data-theme='dark'] .yp-badge-outline {
+  color: #ededed;
+  border-color: #404040;
+}
+
+[data-theme='dark'] .yp-badge-outline:hover {
+  background-color: #262626;
+  color: #ededed;
+}
+
+[data-theme='dark'] .yp-badge:focus-visible {
+  border-color: #ededed;
+  box-shadow: 0 0 0 3px rgba(237, 237, 237, 0.5);
+}
+
+[data-theme='dark'] .yp-badge-destructive:focus-visible {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.4);
+}
+
+[data-theme='dark'] .yp-badge[aria-invalid='true'] {
+  border-color: #f87171;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
 }

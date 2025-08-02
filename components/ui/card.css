@@ -2,13 +2,13 @@
 
 /* Base Card */
 .yp-card {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: #ffffff;
+  color: #171717;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   border-radius: 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid #e5e5e5;
   padding: 1.5rem;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
@@ -40,7 +40,7 @@
 
 /* Card Description */
 .yp-card-description {
-  color: var(--muted-foreground);
+  color: #737373;
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
@@ -72,22 +72,13 @@
   padding-top: 1.5rem;
 }
 
-/* CSS Custom Properties for theming */
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --card: #ffffff;
-  --card-foreground: #171717;
-  --border: #e5e5e5;
-  --muted-foreground: #737373;
+/* Dark theme support */
+[data-theme='dark'] .yp-card {
+  background-color: #0a0a0a;
+  color: #ededed;
+  border-color: #262626;
 }
 
-/* Dark theme support */
-[data-theme='dark'] {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --card: #0a0a0a;
-  --card-foreground: #ededed;
-  --border: #262626;
-  --muted-foreground: #a3a3a3;
+[data-theme='dark'] .yp-card-description {
+  color: #a3a3a3;
 }
