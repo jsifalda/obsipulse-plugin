@@ -18,7 +18,6 @@ export interface YourPulseSettings {
   statusBarStats?: boolean
   linkedNotesEnabled?: boolean
   linkedNotesMaxDepth?: number
-  linkedNotesMaxContentSize?: number
 }
 
 export interface DailyCountItem {

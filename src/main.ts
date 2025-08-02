@@ -161,11 +161,13 @@ class YourPulseSettingTab extends PluginSettingTab {
     if (this.plugin.settings.linkedNotesEnabled !== false) {
       new Setting(containerEl)
         .setName('Max Resolution Depth')
-        .setDesc('Maximum depth for resolving nested linked notes (default: 3)')
+        .setDesc(
+          `Maximum depth for resolving nested linked notes (default: ${DEFAULT_SETTINGS.linkedNotesMaxDepth})`,
+        )
         .addSlider((slider) => {
           slider
             .setLimits(1, 10, 1)
-            .setValue(this.plugin.settings.linkedNotesMaxDepth ?? 3)
+            .setValue(this.plugin.settings.linkedNotesMaxDepth ?? DEFAULT_SETTINGS.linkedNotesMaxDepth)
             .setDynamicTooltip()
             .onChange(async (value) => {
               this.plugin.settings.linkedNotesMaxDepth = value
@@ -173,19 +175,7 @@ class YourPulseSettingTab extends PluginSettingTab {
             })
         })
 
-      new Setting(containerEl)
-        .setName('Max Content Size (MB)')
-        .setDesc('Maximum size for resolved note content in megabytes (default: 1MB)')
-        .addSlider((slider) => {
-          slider
-            .setLimits(0.1, 10, 0.1)
-            .setValue((this.plugin.settings.linkedNotesMaxContentSize ?? 1000000) / 1000000)
-            .setDynamicTooltip()
-            .onChange(async (value) => {
-              this.plugin.settings.linkedNotesMaxContentSize = Math.round(value * 1000000)
-              await this.plugin.saveSettings()
-            })
-        })
+
     }
 
     new Setting(containerEl).setName('Version').setDesc(this.plugin.manifest.version)
@@ -224,7 +214,6 @@ const DEFAULT_SETTINGS: YourPulseSettings = {
   statusBarStats: true,
   linkedNotesEnabled: true,
   linkedNotesMaxDepth: 1,
-  linkedNotesMaxContentSize: 1000000,
 }
 
 interface ParsedLicenseKey {
@@ -455,7 +444,6 @@ export default class YourPulse extends Plugin {
             const linkedNotesCompiler = new LinkedNotesCompiler(
               this.app,
               this.settings.linkedNotesMaxDepth ?? 1,
-              this.settings.linkedNotesMaxContentSize ?? 1000000,
             )
 
             console.time('linked-notes-compile')

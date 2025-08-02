@@ -4,7 +4,6 @@ import {
   createCacheKey,
   findNoteFile,
   isCircularReference,
-  isContentTooLarge,
   readNoteContent,
   sanitizeNoteName,
 } from '../helpers/linkedNotesHelpers'
@@ -18,14 +17,12 @@ export type TCompilerStep = (
 export class LinkedNotesCompiler {
   private app: App
   private maxDepth: number
-  private maxContentSize: number
   private resolvedNotes: Map<string, string> = new Map()
   private processingStack: Set<string> = new Set()
 
-  constructor(app: App, maxDepth: number = 3, maxContentSize: number = 1000000) {
+  constructor(app: App, maxDepth: number = 3) {
     this.app = app
     this.maxDepth = maxDepth
-    this.maxContentSize = maxContentSize
   }
 
   compile: TCompilerStep = (file) => async (text) => {
@@ -88,12 +85,6 @@ export class LinkedNotesCompiler {
       }
 
       const noteContent = await readNoteContent(this.app, noteFile)
-
-      if (isContentTooLarge(noteContent, this.maxContentSize)) {
-        console.warn(`Note content too large: ${noteName}`)
-        return null
-      }
-
       const resolvedContent = await this.resolveLinkedNotes(noteContent, noteFile, depth + 1)
 
       this.resolvedNotes.set(cacheKey, resolvedContent)
@@ -105,10 +96,6 @@ export class LinkedNotesCompiler {
 
   setMaxDepth(depth: number): void {
     this.maxDepth = depth
-  }
-
-  setMaxContentSize(size: number): void {
-    this.maxContentSize = size
   }
 
   clearCache(): void {

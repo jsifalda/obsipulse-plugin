@@ -1,5 +1,17 @@
 # Changelog
 
+## 202501201510 - Removed Max Content Limit for Internal Link Resolver
+
+- **Why**: Remove content size restrictions to allow unlimited note content resolution for better linked notes functionality
+- **Changes**:
+  - Removed maxContentSize parameter from LinkedNotesCompiler constructor
+  - Removed isContentTooLarge check from note resolution process
+  - Removed linkedNotesMaxContentSize setting from YourPulseSettings interface
+  - Removed Max Content Size slider from settings UI
+  - Updated LinkedNotesCompiler to process notes without size limitations
+  - Removed setMaxContentSize method from LinkedNotesCompiler class
+- **Dependencies**: No new dependencies added (removed content size restrictions)
+
 ## 202501201500 - Implemented Linked Notes Resolution Feature
 
 - **Why**: Resolve `![[note]]` references before file upload to make published content self-contained and more readable
