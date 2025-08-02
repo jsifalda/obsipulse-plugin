@@ -51,4 +51,10 @@
 - Modified PrivateModeModal.ts to use React rendering instead of vanilla DOM
 - Added @types/react dependency for TypeScript React support
 
+## 202501191200 - Created PRD for Linked Notes Resolution Feature
+
+- **Why**: User requested feature to resolve `![[note]]` references before file upload to make published content self-contained and more readable
+- **Changes**: Created comprehensive PRD document outlining linked notes resolution functionality
+- **Dependencies**: No new dependencies added (PRD only)
+
 ## Previous changes...
