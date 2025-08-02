@@ -337,6 +337,13 @@ export default class YourPulse extends Plugin {
       }, 60000),
     )
 
+    if (this.app.workspace.layoutReady) {
+      this.initLeaf()
+    } else {
+      // @ts-ignore
+      this.registerEvent(this.app.workspace.on('layout-ready', this.initLeaf.bind(this)))
+    }
+
     this.addCommand({
       id: 'obsipulse-open-profile',
       name: this.settings.privateMode ? 'Open private mode view' : 'Open public profile',
@@ -519,6 +526,12 @@ export default class YourPulse extends Plugin {
         `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/plugins`,
         JSON.stringify(plugins),
       )
+    }
+  }
+
+  initLeaf(): void {
+    if (this.app.workspace.getLeavesOfType(VIEW_TYPE_STATS_TRACKER).length) {
+      return
     }
   }
 
