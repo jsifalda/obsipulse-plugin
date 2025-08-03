@@ -1,5 +1,15 @@
 # Changelog
 
+## 202501201530 - Enhanced Linked Notes Compiler to Exclude Frontmatter
+
+- **Why**: Resolve linked notes with only content content, excluding frontmatter properties like `yp-publish: false` for cleaner published content
+- **Changes**:
+  - Added removeFrontmatter function to linkedNotesHelpers.ts with regex pattern to strip YAML frontmatter blocks
+  - Updated LinkedNotesCompiler.resolveNote to remove frontmatter before processing linked notes content
+  - Fixed TypeScript compatibility issues by replacing matchAll with exec loop for ES6 target compatibility
+  - Enhanced note resolution to exclude metadata while preserving actual content
+- **Dependencies**: No new dependencies added (uses existing regex patterns)
+
 ## 202501201520 - Removed Tailwind CSS Dependencies and Converted to Vanilla CSS
 
 - **Why**: Eliminate Tailwind CSS dependency to reduce bundle size, improve performance, and eliminate potential conflicts with Obsidian's CSS system

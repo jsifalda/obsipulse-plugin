@@ -5,6 +5,7 @@ import {
   findNoteFile,
   isCircularReference,
   readNoteContent,
+  removeFrontmatter,
   sanitizeNoteName,
 } from '../helpers/linkedNotesHelpers'
 
@@ -40,7 +41,12 @@ export class LinkedNotesCompiler {
     }
 
     let resolvedContent = content
-    const matches = content.matchAll(LINKED_NOTES_REGEX)
+    const matches: RegExpMatchArray[] = []
+    let match: RegExpExecArray | null
+
+    while ((match = LINKED_NOTES_REGEX.exec(content)) !== null) {
+      matches.push(match)
+    }
 
     for (const match of matches) {
       const fullMatch = match[0]
@@ -85,7 +91,8 @@ export class LinkedNotesCompiler {
       }
 
       const noteContent = await readNoteContent(this.app, noteFile)
-      const resolvedContent = await this.resolveLinkedNotes(noteContent, noteFile, depth + 1)
+      const contentWithoutFrontmatter = removeFrontmatter(noteContent)
+      const resolvedContent = await this.resolveLinkedNotes(contentWithoutFrontmatter, noteFile, depth + 1)
 
       this.resolvedNotes.set(cacheKey, resolvedContent)
       return resolvedContent

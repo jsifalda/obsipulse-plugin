@@ -34,6 +34,11 @@ export async function readNoteContent(app: App, noteFile: TFile): Promise<string
   }
 }
 
+export function removeFrontmatter(content: string): string {
+  const frontmatterRegex = /^---\s*\n[\s\S]*?\n---\s*\n/
+  return content.replace(frontmatterRegex, '')
+}
+
 export function isCircularReference(processingStack: Set<string>, noteName: string): boolean {
   return processingStack.has(noteName)
 }
