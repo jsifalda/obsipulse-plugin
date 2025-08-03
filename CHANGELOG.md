@@ -1,5 +1,15 @@
 # Changelog
 
+## 202501201545 - Added yp-publish-url File Property After Upload
+
+- **Why**: Add file property to track published files with their upload URL for better file management and tracking
+- **Changes**:
+  - Created addYpPublishUrl helper function to add yp-publish-url property to file frontmatter
+  - Updated file upload logic to add yp-publish-url: example.com after successful upload
+  - Added error handling for file modification operations
+  - Enhanced upload pipeline to modify file properties post-upload
+- **Dependencies**: No new dependencies added (uses existing Obsidian API)
+
 ## 202501201530 - Enhanced Linked Notes Compiler to Exclude Frontmatter
 
 - **Why**: Resolve linked notes with only content content, excluding frontmatter properties like `yp-publish: false` for cleaner published content

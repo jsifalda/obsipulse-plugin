@@ -19,6 +19,7 @@ import { DataviewCompiler } from './compilers/DataViewCompiler'
 import { LinkedNotesCompiler } from './compilers/LinkedNotesCompiler'
 import { PrivateModeModal } from './components/PrivateModeModal'
 import { VIEW_TYPE_STATS_TRACKER } from './constants'
+import { addYpPublishUrlToFile } from './helpers/addYpPublishUrl'
 import { createProfileUrl } from './helpers/createProfileUrl'
 import { Encryption } from './helpers/Encryption'
 import { getLeaderBoardUser } from './helpers/getLeaderBoardUser'
@@ -417,13 +418,6 @@ export default class YourPulse extends Plugin {
 
     this.registerEvent(
       this.app.vault.on('modify', async (file: TFile) => {
-        // console.log(
-        //   '--file',
-        //   file.path,
-        //   this.settings.publicPaths,
-        //   this.settings.publicPaths.includes(file.path),
-        // )
-
         if (this.settings.privateMode) {
           console.log('[yourpulse] private mode, skipping file upload', file.path)
           return
@@ -436,18 +430,20 @@ export default class YourPulse extends Plugin {
           const dataviewCompiler = new DataviewCompiler()
           const fileContent = await this.app.vault.read(file)
 
-          let processedContent = fileContent
+          const processedContent =
+            this.settings.linkedNotesEnabled !== false
+              ? await (async () => {
+                  const linkedNotesCompiler = new LinkedNotesCompiler(
+                    this.app,
+                    this.settings.linkedNotesMaxDepth ?? 1,
+                  )
 
-          if (this.settings.linkedNotesEnabled !== false) {
-            const linkedNotesCompiler = new LinkedNotesCompiler(
-              this.app,
-              this.settings.linkedNotesMaxDepth ?? 1,
-            )
-
-            console.time('linked-notes-compile')
-            processedContent = await linkedNotesCompiler.compile(file)(fileContent)
-            console.timeEnd('linked-notes-compile')
-          }
+                  console.time('linked-notes-compile')
+                  const c = await linkedNotesCompiler.compile(file)(fileContent)
+                  console.timeEnd('linked-notes-compile')
+                  return c
+                })()
+              : fileContent
 
           console.time('dataview-compile')
           const compiledFile = await dataviewCompiler.compile(file)(processedContent)
@@ -455,10 +451,21 @@ export default class YourPulse extends Plugin {
 
           const hash = encodeURIComponent(file.path)
           const toSync = { stat: file.stat, content: compiledFile, path: file.path }
-          this.updateFilesDb(
-            `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/files/${hash}`,
-            JSON.stringify(toSync),
-          )
+
+          try {
+            await this.updateFilesDb(
+              `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/files/${hash}`,
+              JSON.stringify(toSync),
+            )
+
+            await addYpPublishUrlToFile(
+              file,
+              this.app,
+              `https://www.yourpulse.cc/app/profile/${this.settings.userId}/file/${hash}`,
+            )
+          } catch (error) {
+            console.error('[yourpulse] error uploading file:', error, toSync)
+          }
         }
       }),
     )
