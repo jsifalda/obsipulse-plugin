@@ -690,7 +690,7 @@ export default class YourPulse extends Plugin {
 
       return requestUrl({
         method: 'POST',
-        url: `https://mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
+        url: `https://www.mypi.one/webhook/424317ea-705c-41e4-b97b-441337d46f59`,
         headers: {
           'content-type': 'application/json',
         },
@@ -704,7 +704,7 @@ export default class YourPulse extends Plugin {
 
       return requestUrl({
         method: 'POST',
-        url: `https://mypi.one/webhook/9e631d01-6a29-4752-99c3-9fea9244b163`,
+        url: `https://www.mypi.one/webhook/9e631d01-6a29-4752-99c3-9fea9244b163`,
         headers: {
           'content-type': 'application/json',
         },
