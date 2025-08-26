@@ -1,5 +1,26 @@
 # Changelog
 
+## 202508262254 - Fixed Dynamic Import Chunk Loading Error for Chart Library
+
+- **Why**: Chart modal was failing with "Cannot find module './index-443d1fb2.js'" error due to rollup creating separate chunks for dynamic imports that couldn't be resolved at runtime in Obsidian environment
+- **Changes**:
+  - Added `inlineDynamicImports: true` to rollup config to bundle dynamic imports inline instead of creating separate chunks
+  - Enhanced nodeResolve plugin configuration with proper export conditions
+  - Added fallback CDN loading mechanism for @observablehq/plot library if local import fails
+  - Dependencies: @observablehq/plot (already present)
+
+## 202501201600 - Implemented Lazy Loading for Chart Library to Fix Mobile Compatibility
+
+- **Why**: Fix mobile loading issues caused by @observablehq/plot library compatibility problems on iOS devices
+- **Changes**:
+  - Replaced direct Plot import with dynamic import() for lazy loading
+  - Added ChartComponent with error boundary and loading states
+  - Created SimpleStatsDisplay fallback component for when charts fail to load
+  - Added comprehensive error handling to prevent plugin crashes on mobile
+  - Enhanced CSS utilities for fallback display styling
+  - Maintained all existing chart functionality while improving mobile reliability
+- **Dependencies**: No new dependencies added (uses existing dynamic import)
+
 ## 202501201545 - Added yp-publish-url File Property After Upload
 
 - **Why**: Add file property to track published files with their upload URL for better file management and tracking

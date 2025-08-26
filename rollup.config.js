@@ -10,6 +10,7 @@ export default {
     sourcemap: 'inline',
     format: 'cjs',
     exports: 'default',
+    inlineDynamicImports: true,
   },
   external: ['obsidian', 'crypto'],
   plugins: [
@@ -17,7 +18,11 @@ export default {
       tsconfig: './tsconfig.json',
       jsx: 'react-jsx',
     }),
-    nodeResolve({ browser: true, preferBuiltins: true }),
+    nodeResolve({
+      browser: true,
+      preferBuiltins: true,
+      exportConditions: ['default', 'module', 'import'],
+    }),
     commonjs({
       include: 'node_modules/**',
       transformMixedEsModules: true,
