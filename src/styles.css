@@ -38,6 +38,10 @@
   gap: 0.25rem;
 }
 
+.yp-gap-4 {
+  gap: 1rem;
+}
+
 /* Margin utilities */
 .yp-mt-0 {
   margin-top: 0;
@@ -68,6 +72,10 @@
   padding-left: 0.5rem;
 }
 
+.yp-p-4 {
+  padding: 1rem;
+}
+
 /* Text utilities */
 .yp-text-xs {
   font-size: 0.75rem;
@@ -79,13 +87,27 @@
   line-height: 1.25rem;
 }
 
+.yp-text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 .yp-text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
 }
 
+.yp-text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
 .yp-font-bold {
   font-weight: 700;
+}
+
+.yp-font-semibold {
+  font-weight: 600;
 }
 
 .yp-text-center {
@@ -94,6 +116,26 @@
 
 .yp-text-gray-500 {
   color: #6b7280;
+}
+
+.yp-text-gray-600 {
+  color: #4b5563;
+}
+
+.yp-text-blue-600 {
+  color: #2563eb;
+}
+
+.yp-text-green-600 {
+  color: #16a34a;
+}
+
+.yp-text-purple-600 {
+  color: #9333ea;
+}
+
+.yp-text-orange-600 {
+  color: #ea580c;
 }
 
 .yp-text-muted-foreground {
@@ -114,6 +156,10 @@
   width: 1rem;
 }
 
+.yp-h-60 {
+  height: 15rem;
+}
+
 /* Grid utilities */
 .yp-grid {
   display: grid;
@@ -123,8 +169,22 @@
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
+.yp-grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .yp-col-span-2 {
   grid-column: span 2 / span 2;
+}
+
+/* Background utilities */
+.yp-bg-gray-50 {
+  background-color: #f9fafb;
+}
+
+/* Border radius utilities */
+.yp-rounded-lg {
+  border-radius: 0.5rem;
 }
 
 /* Responsive utilities */

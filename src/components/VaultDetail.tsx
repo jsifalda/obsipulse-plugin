@@ -3,15 +3,144 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { calculateDailyAverage, calculateInLastXDays, calculateStreak, parseDailyCounts } from '@/lib/stats'
 import { DeviceData } from '@/lib/types'
 import { convertObjectToArray } from '@/lib/utils'
-import * as Plot from '@observablehq/plot'
-import { Activity, Info } from 'lucide-react'
-import { useEffect, useMemo, useRef } from 'react'
+import { Activity } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 const MAX_DAILY_COUNT = 18
 const MAX_DAILY_HALF_COUNT = Math.floor(MAX_DAILY_COUNT / 2)
 
 interface VaultDetailProps {
   vault: DeviceData
+}
+
+// Simple stats display component for fallback
+const SimpleStatsDisplay = ({ dailyCounts, vault }: { dailyCounts: any[]; vault: any }) => (
+  <div className="yp-flex yp-flex-col yp-gap-4 yp-p-4 yp-bg-gray-50 yp-rounded-lg">
+    <h3 className="yp-text-lg yp-font-semibold yp-text-center">Writing Activity Summary</h3>
+    <div className="yp-grid yp-grid-cols-2 yp-gap-4">
+      <div className="yp-text-center">
+        <div className="yp-text-2xl yp-font-bold yp-text-blue-600">{dailyCounts.length}</div>
+        <div className="yp-text-sm yp-text-gray-600">Total Days</div>
+      </div>
+      <div className="yp-text-center">
+        <div className="yp-text-2xl yp-font-bold yp-text-green-600">{vault.streak}</div>
+        <div className="yp-text-sm yp-text-gray-600">Current Streak</div>
+      </div>
+      <div className="yp-text-center">
+        <div className="yp-text-2xl yp-font-bold yp-text-purple-600">{vault.averages.daily}</div>
+        <div className="yp-text-sm yp-text-gray-600">Daily Average</div>
+      </div>
+      <div className="yp-text-center">
+        <div className="yp-text-2xl yp-font-bold yp-text-orange-600">{vault.inLast['7days']}</div>
+        <div className="yp-text-sm yp-text-gray-600">Last 7 Days</div>
+      </div>
+    </div>
+  </div>
+)
+
+// Chart component with lazy loading and error handling
+const ChartComponent = ({ dailyCounts }: { dailyCounts: any[] }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [chartError, setChartError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    if (chartError || !ref.current) return
+
+    const loadChart = async () => {
+      try {
+        setIsLoading(true)
+
+        const Plot = await import('@observablehq/plot')
+
+        const barChart = Plot.plot({
+          padding: 0,
+          height: 240,
+          y: {
+            type: 'band',
+            domain: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          },
+          x: {
+            type: 'band',
+            domain: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+          },
+          color: {
+            type: 'threshold',
+            domain: (() => {
+              const values = dailyCounts.map((d) => d.value).filter(Boolean)
+              const numberOfSteps = 9
+
+              if (values.length === 0) {
+                return Array.from({ length: numberOfSteps }, (_, i) => i)
+              }
+
+              const min = Math.min(...values)
+              const max = Math.max(...values)
+              const step = (max - min) / numberOfSteps
+              const numberOfStepsTrimmed = numberOfSteps - 2
+
+              let result = [min]
+              for (let i = 1; i <= numberOfStepsTrimmed; i++) {
+                const stepValue = min + i * step
+                result.push(stepValue)
+              }
+              result.push(max)
+              return result
+            })(),
+            range: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39', '#184d27', '#0d3318'],
+          },
+          marks: [
+            Plot.cell(
+              dailyCounts,
+              Plot.group(
+                { fill: 'max' },
+                {
+                  x: (d) => {
+                    const x = new Date(d.date).toLocaleString('default', { month: 'short' })
+                    return x
+                  },
+                  y: (d) => {
+                    const day = new Date(d.date).getDay()
+                    const y = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]
+                    return y
+                  },
+                  fill: 'value',
+                  inset: 2,
+                  title: (d) => `${d.key}: ${d.value} words`,
+                },
+              ),
+            ),
+          ],
+        })
+
+        ref.current?.append(barChart)
+        setIsLoading(false)
+
+        return () => barChart.remove()
+      } catch (error) {
+        console.error('Chart library failed to load:', error)
+        setChartError(true)
+        setIsLoading(false)
+      }
+    }
+
+    loadChart()
+  }, [dailyCounts, chartError])
+
+  if (chartError) {
+    return null
+  }
+
+  return (
+    <div>
+      {isLoading ? (
+        <div className="yp-flex yp-justify-center yp-items-center yp-h-60">
+          <div className="yp-text-gray-500">Loading chart...</div>
+        </div>
+      ) : null}
+      <div ref={ref} />
+    </div>
+  )
 }
 
 export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
@@ -42,90 +171,13 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
     })
   }, [dailyCounts])
 
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const barChart = Plot.plot({
-      padding: 0,
-      height: 240, // Set the height to 240px
-      y: {
-        type: 'band',
-        domain: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      },
-      x: {
-        type: 'band',
-        domain: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-      },
-      color: {
-        type: 'threshold',
-        //  Opacity scales have a default domain from 0 to the maximum value of associated channels.
-        domain: (() => {
-          const values = dailyCounts.map((d) => d.value).filter(Boolean)
-          const numberOfSteps = 9
-
-          if (values.length === 0) {
-            return Array.from({ length: numberOfSteps }, (_, i) => i)
-          }
-
-          const min = Math.min(...values)
-          const max = Math.max(...values)
-          const step = (max - min) / numberOfSteps
-          const numberOfStepsTrimmed = numberOfSteps - 2 // (to remove the min and max)
-
-          let result = [min]
-          for (let i = 1; i <= numberOfStepsTrimmed; i++) {
-            const stepValue = min + i * step
-            result.push(stepValue)
-          }
-          result.push(max)
-          // const result = [min + step, min + 2 * step, min + 3 * step, max]
-          // console.log('---result', result, { min, max, step })
-          return result
-        })(),
-        range: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39', '#184d27', '#0d3318'],
-      },
-      // based on: https://observablehq.com/@observablehq/plot-seattle-temperature-heatmap?intent=fork
-      marks: [
-        Plot.cell(
-          dailyCounts,
-          Plot.group(
-            { fill: 'max' },
-            {
-              x: (d) => {
-                const x = new Date(d.date).toLocaleString('default', { month: 'short' })
-                return x
-              },
-              y: (d) => {
-                const day = new Date(d.date).getDay()
-                const y = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]
-                return y
-              },
-              // fill: (d) => d.value,
-              fill: 'value',
-              inset: 2,
-              title: (d) => `${d.key}: ${d.value} words`,
-            },
-          ),
-        ),
-      ],
-    })
-    ref?.current?.append(barChart)
-
-    return () => barChart.remove()
-  }, [dailyCounts])
-
   return (
     <>
       <div className="yp-flex yp-flex-col yp-md-flex-row yp-justify-between yp-mt-5">
         <div className="yp-md-mb-0">
           <h2 className="yp-text-xl yp-font-bold yp-mb-5">Contributions in last year</h2>
-          <div {...{ ref }}></div>
-          {/* {dailyCountsSorted.length ? (
-            <p className="yp-text-xs yp-text-muted-foreground yp-mt-0 yp-mb-3 yp-flex yp-items-center yp-gap-1">
-              <Info className="yp-h-4 yp-w-4" />
-              Tip: Hover over cells to see word count details
-            </p>
-          ) : null} */}
+          <ChartComponent dailyCounts={dailyCounts} />
+          {dailyCounts.length === 0 && <SimpleStatsDisplay dailyCounts={dailyCounts} vault={vault} />}
         </div>
       </div>
 
@@ -146,10 +198,7 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
             <CardTitle className="yp-text-center">Daily Average</CardTitle>
           </CardHeader>
           <CardContent className="yp-flex yp-justify-center">
-            <Badge>
-              {/* <WholeWord className="size-4" /> &nbsp; */}
-              {vault.averages.daily} words
-            </Badge>
+            <Badge>{vault.averages.daily} words</Badge>
           </CardContent>
         </Card>
       </div>
