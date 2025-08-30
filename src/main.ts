@@ -255,9 +255,13 @@ export default class YourPulse extends Plugin {
       return this.deviceName
     }
 
-    // @ts-ignore
-    const syncPlugin = this.app.internalPlugins.plugins['sync'].instance
-    this.deviceName = syncPlugin.deviceName ? syncPlugin.deviceName : syncPlugin.getDefaultDeviceName()
+    try {
+      // @ts-ignore
+      const syncPlugin = this.app.internalPlugins.plugins['sync'].instance
+      this.deviceName = syncPlugin.deviceName ? syncPlugin.deviceName : syncPlugin.getDefaultDeviceName()
+    } catch (e) {
+      console.error('--error getting device name', e)
+    }
 
     if (!this.deviceName) {
       this.deviceName = this.app.vault.adapter.getName() || uuidv4()

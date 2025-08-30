@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { calculateDailyAverage, calculateInLastXDays, calculateStreak, parseDailyCounts } from '@/lib/stats'
 import { DeviceData } from '@/lib/types'
 import { convertObjectToArray } from '@/lib/utils'
-import { Activity } from 'lucide-react'
+// import { Activity } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const MAX_DAILY_COUNT = 18
@@ -38,7 +38,6 @@ const SimpleStatsDisplay = ({ dailyCounts, vault }: { dailyCounts: any[]; vault:
   </div>
 )
 
-// Chart component with lazy loading and error handling
 const ChartComponent = ({ dailyCounts }: { dailyCounts: any[] }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [chartError, setChartError] = useState(false)
@@ -188,7 +187,7 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
           </CardHeader>
           <CardContent className="yp-flex yp-justify-center">
             <Badge>
-              <Activity className="yp-size-4" />
+              {/* <Activity className="yp-size-4" /> */}
               &nbsp; {vault.streak} days
             </Badge>
           </CardContent>
