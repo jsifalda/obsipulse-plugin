@@ -661,8 +661,8 @@ export default class YourPulse extends Plugin {
     this.hasCountChanged = true
   }
   checkForPluginChanges() {
-    // @ts-ignore - App type definition issue
-    const currentPlugins = new Set<string>(this.app.plugins.enabledPlugins)
+    // @ts-ignore
+    const currentPlugins = new Set<string>(this.app?.plugins?.enabledPlugins || [])
     let pluginListHasChanged = false
     // Check for newly enabled plugins
     for (const plugin of currentPlugins) {
