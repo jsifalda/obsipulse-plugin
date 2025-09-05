@@ -1,0 +1,1 @@
+/Users/jsifalda/vaults/brain/.obsidian/plugins/yourpulse/AGENTS.md
