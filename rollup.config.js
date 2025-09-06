@@ -32,5 +32,16 @@ export default {
       extract: false,
       inject: true,
     }),
+    {
+      name: 'define-process-env',
+      generateBundle(options, bundle) {
+        Object.keys(bundle).forEach((fileName) => {
+          const file = bundle[fileName]
+          if (file.type === 'chunk') {
+            file.code = file.code.replace(/process\.env\.NODE_ENV/g, '"production"')
+          }
+        })
+      },
+    },
   ],
 }

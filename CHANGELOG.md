@@ -1,5 +1,14 @@
 # Changelog
 
+## 202501271200 - Fixed Mobile Loading Error with Process Variable
+
+- **Why**: Plugin was failing to load on mobile devices with "Can't find variable: process" error due to dependencies checking process.env.NODE_ENV which doesn't exist in mobile browsers
+- **Changes**:
+  - Added custom rollup plugin to replace process.env.NODE_ENV references with "production" string literal
+  - Fixed mobile compatibility by eliminating Node.js-specific global variable usage
+  - Maintained all existing functionality while ensuring mobile browser compatibility
+- **Dependencies**: No new dependencies added (uses existing rollup configuration)
+
 ## 202508262254 - Fixed Dynamic Import Chunk Loading Error for Chart Library
 
 - **Why**: Chart modal was failing with "Cannot find module './index-443d1fb2.js'" error due to rollup creating separate chunks for dynamic imports that couldn't be resolved at runtime in Obsidian environment
