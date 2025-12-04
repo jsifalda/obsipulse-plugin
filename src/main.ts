@@ -551,7 +551,7 @@ export default class YourPulse extends Plugin {
     this.registerInterval(
       window.setInterval(() => {
         initLeaderboard()
-      }, 60 * 1000 * 15), // 15 minutes
+      }, 60 * 1000 * 30), // 30 minutes
     )
 
     if (this.settings.statusBarStats) {

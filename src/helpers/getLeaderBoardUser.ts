@@ -31,7 +31,7 @@ export const getLeaderBoardUser = (
           const response = JSON.parse(JSON.stringify(result))?.json
           resolve({
             user: response?.rankings.find((user: any) => user.userId === userId),
-            totalCount: response?.rankings?.length || 0,
+            totalCount: response.totalCount ?? (response?.rankings?.length || 0),
           })
         } else {
           reject(new Error('Invalid status'))
