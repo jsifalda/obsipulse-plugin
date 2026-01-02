@@ -1,5 +1,14 @@
 # Changelog
 
+## 202601021200 - Added HTML Comment Stripping for Published Notes
+
+- **Why**: Allow users to include private comments/notes within markdown files that won't appear in published content
+- **Changes**:
+  - Added `removeHtmlComments` function to linkedNotesHelpers.ts with regex pattern `<!--[\s\S]*?-->` to match single and multi-line HTML comments
+  - Updated LinkedNotesCompiler.compile to strip HTML comments from main content before processing linked notes
+  - Updated LinkedNotesCompiler.resolveNote to strip HTML comments from linked note content after frontmatter removal but before section/block extraction
+- **Dependencies**: No new dependencies added (uses regex pattern matching)
+
 ## 202501271200 - Fixed Mobile Loading Error with Process Variable
 
 - **Why**: Plugin was failing to load on mobile devices with "Can't find variable: process" error due to dependencies checking process.env.NODE_ENV which doesn't exist in mobile browsers

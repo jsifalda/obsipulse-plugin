@@ -9,6 +9,7 @@ import {
   parseNoteReference,
   readNoteContent,
   removeFrontmatter,
+  removeHtmlComments,
   sanitizeNoteName,
 } from "../helpers/linkedNotesHelpers"
 
@@ -33,7 +34,9 @@ export class LinkedNotesCompiler {
 
   compile: TCompilerStep = (file) => async (text) => {
     try {
-      return await this.resolveLinkedNotes(text, file, 0)
+      // Remove HTML comments from main content before processing linked notes
+      const contentWithoutComments = removeHtmlComments(text)
+      return await this.resolveLinkedNotes(contentWithoutComments, file, 0)
     } catch (error) {
       console.error("LinkedNotesCompiler error:", error)
       return text
@@ -118,12 +121,16 @@ export class LinkedNotesCompiler {
 
       const noteContent = await readNoteContent(this.app, noteFile)
       const contentWithoutFrontmatter = removeFrontmatter(noteContent)
+      // Remove HTML comments from linked note content after frontmatter removal
+      const contentWithoutComments = removeHtmlComments(
+        contentWithoutFrontmatter
+      )
 
-      let extractedContent: string | null = contentWithoutFrontmatter
+      let extractedContent: string | null = contentWithoutComments
 
       if (section) {
         extractedContent = extractSectionContent(
-          contentWithoutFrontmatter,
+          contentWithoutComments,
           section
         )
         if (!extractedContent) {
@@ -131,10 +138,7 @@ export class LinkedNotesCompiler {
           return null
         }
       } else if (blockId) {
-        extractedContent = extractBlockContent(
-          contentWithoutFrontmatter,
-          blockId
-        )
+        extractedContent = extractBlockContent(contentWithoutComments, blockId)
         if (!extractedContent) {
           console.warn(`Block "^${blockId}" not found in note: ${noteName}`)
           return null

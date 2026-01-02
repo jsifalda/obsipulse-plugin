@@ -66,6 +66,16 @@ export function removeFrontmatter(content: string): string {
   return content.replace(frontmatterRegex, "")
 }
 
+/**
+ * Removes HTML comment blocks from content.
+ * Matches both single-line and multi-line HTML comments.
+ * Example: <!-- comment --> or <!-- multi\nline\ncomment -->
+ */
+export function removeHtmlComments(content: string): string {
+  const htmlCommentRegex = /<!--[\s\S]*?-->/g
+  return content.replace(htmlCommentRegex, "")
+}
+
 export function isCircularReference(
   processingStack: Set<string>,
   noteName: string
