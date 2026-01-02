@@ -1,19 +1,24 @@
-import { App, TFile } from 'obsidian'
+import { App, TFile } from "obsidian"
 import {
   LINKED_NOTES_REGEX,
   createCacheKey,
+  extractBlockContent,
+  extractSectionContent,
   findNoteFile,
   isCircularReference,
+  parseNoteReference,
   readNoteContent,
   removeFrontmatter,
   sanitizeNoteName,
-} from '../helpers/linkedNotesHelpers'
+} from "../helpers/linkedNotesHelpers"
 
 type PublishFile = TFile
 
 export type TCompilerStep = (
-  publishFile: PublishFile,
-) => ((partiallyCompiledContent: string) => Promise<string>) | ((partiallyCompiledContent: string) => string)
+  publishFile: PublishFile
+) =>
+  | ((partiallyCompiledContent: string) => Promise<string>)
+  | ((partiallyCompiledContent: string) => string)
 
 export class LinkedNotesCompiler {
   private app: App
@@ -30,12 +35,16 @@ export class LinkedNotesCompiler {
     try {
       return await this.resolveLinkedNotes(text, file, 0)
     } catch (error) {
-      console.error('LinkedNotesCompiler error:', error)
+      console.error("LinkedNotesCompiler error:", error)
       return text
     }
   }
 
-  private async resolveLinkedNotes(content: string, file: PublishFile, depth: number): Promise<string> {
+  private async resolveLinkedNotes(
+    content: string,
+    file: PublishFile,
+    depth: number
+  ): Promise<string> {
     if (depth >= this.maxDepth) {
       return content
     }
@@ -51,9 +60,15 @@ export class LinkedNotesCompiler {
     for (const match of matches) {
       const fullMatch = match[0]
       const noteName = sanitizeNoteName(match[1])
+      const fragment = match[2] ? match[2].substring(1) : undefined // Remove leading #
 
       try {
-        const resolvedNote = await this.resolveNote(noteName, file, depth)
+        const resolvedNote = await this.resolveNote(
+          noteName,
+          file,
+          depth,
+          fragment
+        )
         if (resolvedNote) {
           resolvedContent = resolvedContent.replace(fullMatch, resolvedNote)
         }
@@ -69,19 +84,30 @@ export class LinkedNotesCompiler {
     noteName: string,
     currentFile: PublishFile,
     depth: number,
+    fragment?: string
   ): Promise<string | null> {
-    const cacheKey = createCacheKey(noteName, depth)
+    const { section, blockId } = fragment
+      ? parseNoteReference(`${noteName}#${fragment}`)
+      : { section: undefined, blockId: undefined }
+
+    const cacheKey = createCacheKey(noteName, depth, section, blockId)
 
     if (this.resolvedNotes.has(cacheKey)) {
       return this.resolvedNotes.get(cacheKey) || null
     }
 
-    if (isCircularReference(this.processingStack, noteName)) {
-      console.warn(`Circular reference detected for note: ${noteName}`)
+    const referenceKey = section
+      ? `${noteName}#${section}`
+      : blockId
+      ? `${noteName}#^${blockId}`
+      : noteName
+
+    if (isCircularReference(this.processingStack, referenceKey)) {
+      console.warn(`Circular reference detected for note: ${referenceKey}`)
       return null
     }
 
-    this.processingStack.add(noteName)
+    this.processingStack.add(referenceKey)
 
     try {
       const noteFile = findNoteFile(this.app, noteName)
@@ -92,12 +118,39 @@ export class LinkedNotesCompiler {
 
       const noteContent = await readNoteContent(this.app, noteFile)
       const contentWithoutFrontmatter = removeFrontmatter(noteContent)
-      const resolvedContent = await this.resolveLinkedNotes(contentWithoutFrontmatter, noteFile, depth + 1)
+
+      let extractedContent: string | null = contentWithoutFrontmatter
+
+      if (section) {
+        extractedContent = extractSectionContent(
+          contentWithoutFrontmatter,
+          section
+        )
+        if (!extractedContent) {
+          console.warn(`Section "${section}" not found in note: ${noteName}`)
+          return null
+        }
+      } else if (blockId) {
+        extractedContent = extractBlockContent(
+          contentWithoutFrontmatter,
+          blockId
+        )
+        if (!extractedContent) {
+          console.warn(`Block "^${blockId}" not found in note: ${noteName}`)
+          return null
+        }
+      }
+
+      const resolvedContent = await this.resolveLinkedNotes(
+        extractedContent,
+        noteFile,
+        depth + 1
+      )
 
       this.resolvedNotes.set(cacheKey, resolvedContent)
       return resolvedContent
     } finally {
-      this.processingStack.delete(noteName)
+      this.processingStack.delete(referenceKey)
     }
   }
 
