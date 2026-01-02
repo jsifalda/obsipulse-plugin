@@ -1,7 +1,7 @@
 {
   "id": "yourpulse",
   "name": "YourPulse - Your Writing Activity Visualised",
-  "version": "2.3.7",
+  "version": "2.4.0",
   "minAppVersion": "0.15.0",
   "description": "It's like your Github profile, but for your vault (featuring daily streak, average daily word count, comprehensive stats and plugins overview).",
   "author": "Jiri Sifalda (@jsifalda)",
