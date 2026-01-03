@@ -1,28 +1,37 @@
 # YourPulse - Your Writing Activity Visualised
 
-YourPulse (formerly <u>ObsiPulse</u>) is a plugin for [Obsidian](https://obsidian.md) that allows users to track their daily word count across all notes in their vault. It provides a visual representation of your writing activity, similar to GitHub's contribution graph, and offers a public profile feature for sharing selected notes.
-More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
-
 ![YourPulse Banner](./banner.png)
+
+YourPulse (formerly <u>ObsiPulse</u>) is a plugin for [Obsidian](https://obsidian.md) that allows users to track their daily word count across all notes in their vault. It provides a visual representation of your writing activity, similar to GitHub's contribution graph, and offers a public profile feature for sharing selected notes.
+
+Bundled with some additional features for complete creative writing workflow - **uploading and sharign notes in public**, and public profiles for your audience to discover you.
+
+More details available on [YourPulse.cc](https://yourpulse.cc?ref=github).
 
 ## Features
 
 - **Gamify your writing** by tracking your daily writing streak.
 - **Gain valuable insights** into your writing habits.
+- **Upload & share selected notes** (with support of **Dataview rendering**, and linked notes resolution).
 - **Private Mode**: Activate with your license key to ensure no data leaves your vault - perfect for users who value their privacy.
+
+### Sharing Notes Features
+- **Always in sync**: YourPulse automatically detects changes in your notes and updates your public profile in real-time.
+- **Dataview Rendering**: Supports rendering of Dataview queries within your notes, allowing you to share dynamic and interactive content.
+- **Linked Notes Resolution**: Automatically resolves `![[note]]` references before upload, ensuring published content is complete - also with support of `![[note#section]]` and `![[note#^blockId]]`
+- **HTML Comment Stripping**: Removes HTML comments from published content to exclude private notes within markdown files (`<!-- this part of the note will not be publsuhed -->`)
+- **Total control over published content**: You can mark individual notes for publishing by adding `yp-publish: true` to their file properties (frontmatter) - plugin will automatically add `yp-publish-url: https://yourpulse.cc/app/profile/your-user-id/file/your-file-hash` property to the file after successful upload
 
 ### Public Profile Features
 
 - **Compete with other Obsidian users** on a shared leaderboard.
 - **Share Your Progress** with a free public profile URL to share your writing journey with friends or colleagues.
 - Never answer the question **"What Obsidian plugins do you use?" → it's all on your profile.**
-- **Upload & share selected notes** (with support of **Dataview rendering**).
-- **Linked Notes Resolution**: Automatically resolves `![[note]]` references before upload, ensuring published content is complete and self-contained.
 - Seamlessly manage insights across multiple vaults.
 
 ## Usage
 
-- Install the plugin from Obsidian's community plugins (or via BRAT).
+- Install the plugin from Obsidian's community plugins
 - Write notes as you normally would.
 - Run `YourPulse` command and your YourPulse profile will open.
 
