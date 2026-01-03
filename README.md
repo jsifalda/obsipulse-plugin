@@ -87,6 +87,9 @@ If you find this plugin valuable, consider supporting its development, because i
 
 <a href="https://jsifalda.link/CYERt3t" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
+## Other Projects
+[![Obsidian Gallery Banner](./gallery-banner-bg.png)](https://vaults.obsidian-community.com/?ref=github-jsifalda/obsipulse-plugin)
+
 ---
 
 [![wakatime](https://wakatime.com/badge/user/15205825-ea5c-4bdc-94ae-b2f25e876c76/project/072481d6-f1f1-4227-8a81-f30b49713e94.svg)](https://wakatime.com/badge/user/15205825-ea5c-4bdc-94ae-b2f25e876c76/project/072481d6-f1f1-4227-8a81-f30b49713e94)
