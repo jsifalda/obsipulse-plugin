@@ -1,8 +1,8 @@
-# YourPulse - Your Writing Activity Visualised
+# YourPulse - Your Ultimate Obsidian Writing Toolkit
 
 ![YourPulse Banner](./banner.png)
 
-YourPulse (formerly <u>ObsiPulse</u>) is a plugin for [Obsidian](https://obsidian.md) that allows users to track their daily word count across all notes in their vault. It provides a visual representation of your writing activity, similar to GitHub's contribution graph, and offers a public profile feature for sharing selected notes.
+YourPulse is a plugin for [Obsidian](https://obsidian.md) that allows users to track their daily word count across all notes in their vault. It provides a visual representation of your writing activity, similar to GitHub's contribution graph, and offers a public profile feature for sharing selected notes.
 
 Bundled with some additional features for complete creative writing workflow - **uploading and sharign notes in public**, and public profiles for your audience to discover you.
 
