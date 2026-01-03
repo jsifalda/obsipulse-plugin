@@ -1,2 +1,2 @@
 yarn lint-staged
-yarn test
+yarn test:coverage
