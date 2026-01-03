@@ -12,10 +12,12 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "lib": ["dom", "es5", "scripthost", "es2015", "DOM.Iterable"],
+    "lib": ["dom", "es5", "scripthost", "es2015", "es2020", "DOM.Iterable"],
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "tests/**/*.ts"],
+  "exclude": ["node_modules", "main.js", "coverage"]
 }

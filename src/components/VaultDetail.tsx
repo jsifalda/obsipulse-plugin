@@ -1,6 +1,11 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { calculateDailyAverage, calculateInLastXDays, calculateStreak, parseDailyCounts } from '@/lib/stats'
+import {
+  calculateDailyAverage,
+  calculateInLastXDays,
+  calculateStreak,
+  parseDailyCounts,
+} from '@/lib/stats'
 import { DeviceData } from '@/lib/types'
 import { convertObjectToArray } from '@/lib/utils'
 // import { Activity } from 'lucide-react'
@@ -61,7 +66,20 @@ const ChartComponent = ({ dailyCounts }: { dailyCounts: any[] }) => {
           },
           x: {
             type: 'band',
-            domain: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+            domain: [
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sept',
+              'Oct',
+              'Nov',
+              'Dec',
+            ],
           },
           color: {
             type: 'threshold',
@@ -106,8 +124,8 @@ const ChartComponent = ({ dailyCounts }: { dailyCounts: any[] }) => {
                   fill: 'value',
                   inset: 2,
                   title: (d) => `${d.key}: ${d.value} words`,
-                },
-              ),
+                }
+              )
             ),
           ],
         })
@@ -176,7 +194,9 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
         <div className="yp-md-mb-0">
           <h2 className="yp-text-xl yp-font-bold yp-mb-5">Contributions in last year</h2>
           <ChartComponent dailyCounts={dailyCounts} />
-          {dailyCounts.length === 0 && <SimpleStatsDisplay dailyCounts={dailyCounts} vault={vault} />}
+          {dailyCounts.length === 0 && (
+            <SimpleStatsDisplay dailyCounts={dailyCounts} vault={vault} />
+          )}
         </div>
       </div>
 
@@ -236,7 +256,8 @@ export const VaultDetail = ({ vault: data }: VaultDetailProps) => {
 
       {dailyCountsSorted.length > MAX_DAILY_COUNT && (
         <div className="yp-text-sm yp-text-gray-500 yp-mt-2 yp-col-span-2">
-          Showing only the last {MAX_DAILY_COUNT} items out of {dailyCountsSorted.length} contributions.
+          Showing only the last {MAX_DAILY_COUNT} items out of {dailyCountsSorted.length}{' '}
+          contributions.
         </div>
       )}
 

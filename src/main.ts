@@ -103,7 +103,7 @@ class YourPulseSettingTab extends PluginSettingTab {
             // Refresh the settings display to update private mode toggle
             this.display()
           }
-        }),
+        })
     )
 
     if (!this.plugin.settings.key) {
@@ -112,7 +112,10 @@ class YourPulseSettingTab extends PluginSettingTab {
           .setButtonText('Request License')
           .setCta()
           .onClick(() => {
-            window.open('mailto:sifalda.jiri@gmail.com?subject=YourPulse%20License%20Request', '_blank')
+            window.open(
+              'mailto:sifalda.jiri@gmail.com?subject=YourPulse%20License%20Request',
+              '_blank'
+            )
           })
       })
     }
@@ -120,7 +123,7 @@ class YourPulseSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('Hide Status Bar Stats')
       .setDesc(
-        'Hide the status bar stats for this plugin. Useful if you want to keep your workspace clean and distraction-free.',
+        'Hide the status bar stats for this plugin. Useful if you want to keep your workspace clean and distraction-free.'
       )
       .addToggle((toggle) => {
         toggle.setValue(!this.plugin.settings.statusBarStats).onChange(async (value) => {
@@ -145,29 +148,33 @@ class YourPulseSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.publicPaths = value.split('\n')
             await this.plugin.saveData(this.plugin.settings)
-          }),
+          })
       )
 
       new Setting(containerEl)
         .setName('Linked Notes Resolution')
         .setDesc('Enable resolution of linked notes (![[note]]) before file upload')
         .addToggle((toggle) => {
-          toggle.setValue(this.plugin.settings.linkedNotesEnabled ?? true).onChange(async (value) => {
-            this.plugin.settings.linkedNotesEnabled = value
-            await this.plugin.saveSettings()
-          })
+          toggle
+            .setValue(this.plugin.settings.linkedNotesEnabled ?? true)
+            .onChange(async (value) => {
+              this.plugin.settings.linkedNotesEnabled = value
+              await this.plugin.saveSettings()
+            })
         })
 
       if (this.plugin.settings.linkedNotesEnabled !== false) {
         new Setting(containerEl)
           .setName('Max Resolution Depth')
           .setDesc(
-            `Maximum depth for resolving nested linked notes (default: ${DEFAULT_SETTINGS.linkedNotesMaxDepth})`,
+            `Maximum depth for resolving nested linked notes (default: ${DEFAULT_SETTINGS.linkedNotesMaxDepth})`
           )
           .addSlider((slider) => {
             slider
               .setLimits(1, 10, 1)
-              .setValue(this.plugin.settings.linkedNotesMaxDepth ?? DEFAULT_SETTINGS.linkedNotesMaxDepth)
+              .setValue(
+                this.plugin.settings.linkedNotesMaxDepth ?? DEFAULT_SETTINGS.linkedNotesMaxDepth
+              )
               .setDynamicTooltip()
               .onChange(async (value) => {
                 this.plugin.settings.linkedNotesMaxDepth = value
@@ -183,7 +190,7 @@ class YourPulseSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('Contact Me')
       .setDesc(
-        'If you have any questions regarding this plugin, please contact me directly on x.com, or open an issue on GitHub',
+        'If you have any questions regarding this plugin, please contact me directly on x.com, or open an issue on GitHub'
       )
       .addButton((button) => {
         button
@@ -258,7 +265,9 @@ export default class YourPulse extends Plugin {
     try {
       // @ts-ignore
       const syncPlugin = this.app.internalPlugins.plugins['sync'].instance
-      this.deviceName = syncPlugin.deviceName ? syncPlugin.deviceName : syncPlugin.getDefaultDeviceName()
+      this.deviceName = syncPlugin.deviceName
+        ? syncPlugin.deviceName
+        : syncPlugin.getDefaultDeviceName()
     } catch (e) {
       console.error('--error getting device name', e)
     }
@@ -348,7 +357,7 @@ export default class YourPulse extends Plugin {
       },
       // 400,
       1000,
-      false,
+      false
     )
     this.ensureDeviceExists()
     const deviceData = this.getLocalData()
@@ -364,13 +373,13 @@ export default class YourPulse extends Plugin {
       window.setInterval(() => {
         this.updateDate()
         this.saveSettings()
-      }, 5000),
+      }, 5000)
     )
 
     this.registerInterval(
       window.setInterval(() => {
         this.checkForPluginChanges()
-      }, 60000),
+      }, 60000)
     )
 
     if (this.app.workspace.layoutReady) {
@@ -397,11 +406,11 @@ export default class YourPulse extends Plugin {
           if (this.settings.userId) {
             this.updateDb(
               `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/daily-counts`,
-              JSON.stringify(this.getFlattenedDayCountsForDb()),
+              JSON.stringify(this.getFlattenedDayCountsForDb())
             )
           }
         }
-      }),
+      })
     )
 
     // this.registerEvent(
@@ -439,7 +448,7 @@ export default class YourPulse extends Plugin {
               ? await (async () => {
                   const linkedNotesCompiler = new LinkedNotesCompiler(
                     this.app,
-                    this.settings.linkedNotesMaxDepth ?? 1,
+                    this.settings.linkedNotesMaxDepth ?? 1
                   )
 
                   console.time('linked-notes-compile')
@@ -459,19 +468,19 @@ export default class YourPulse extends Plugin {
           try {
             await this.updateFilesDb(
               `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/files/${hash}`,
-              JSON.stringify(toSync),
+              JSON.stringify(toSync)
             )
 
             await addYpPublishUrlToFile(
               file,
               this.app,
-              `https://www.yourpulse.cc/app/profile/${this.settings.userId}/file/${hash}`,
+              `https://www.yourpulse.cc/app/profile/${this.settings.userId}/file/${hash}`
             )
           } catch (error) {
             console.error('[yourpulse] error uploading file:', error, toSync)
           }
         }
-      }),
+      })
     )
   }
 
@@ -516,11 +525,11 @@ export default class YourPulse extends Plugin {
     if (this.statusBarEl) {
       if (this.leaderboardPosition) {
         this.statusBarEl.setText(
-          `YourPulse Rank: #${this.leaderboardPosition} (${this.currentWordCount || 0} words today)`,
+          `YourPulse Rank: #${this.leaderboardPosition} (${this.currentWordCount || 0} words today)`
         )
         this.statusBarEl.setAttribute(
           'title',
-          `You rank #${this.leaderboardPosition} users today. (Click to open YourPulse profile)`,
+          `You rank #${this.leaderboardPosition} users today. (Click to open YourPulse profile)`
         )
       } else {
         this.statusBarEl.setText(`YourPulse: ${this.currentWordCount || 0} words today`)
@@ -533,7 +542,7 @@ export default class YourPulse extends Plugin {
     this.registerInterval(
       window.setInterval(() => {
         this.updateStatusBarText()
-      }, 4000),
+      }, 4000)
     )
 
     const initLeaderboard = () => {
@@ -549,9 +558,12 @@ export default class YourPulse extends Plugin {
     initLeaderboard()
 
     this.registerInterval(
-      window.setInterval(() => {
-        initLeaderboard()
-      }, 60 * 1000 * 30), // 30 minutes
+      window.setInterval(
+        () => {
+          initLeaderboard()
+        },
+        60 * 1000 * 30
+      ) // 30 minutes
     )
 
     if (this.settings.statusBarStats) {
@@ -580,7 +592,7 @@ export default class YourPulse extends Plugin {
       const plugins = listAllPlugins(this.app)
       this.updateDb(
         `user/${this.settings.userId}/vault/${this.app.vault.adapter.getName()}/plugins`,
-        JSON.stringify(plugins),
+        JSON.stringify(plugins)
       )
     }
   }
@@ -602,7 +614,7 @@ export default class YourPulse extends Plugin {
     let words: number = 0
 
     const matches = text.match(
-      /[a-zA-Z0-9_\u0392-\u03c9\u00c0-\u00ff\u0600-\u06ff]+|[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/gm,
+      /[a-zA-Z0-9_\u0392-\u03c9\u00c0-\u00ff\u0600-\u06ff]+|[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/gm
     )
 
     if (matches) {
