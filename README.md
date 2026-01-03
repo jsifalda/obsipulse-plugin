@@ -58,11 +58,10 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## Contact
 
-- **Author**: Jiri Sifalda
-- **X (Twitter)**: [@jsifalda](https://dub.sh/kWUczm4)
-- **Bluesky**: [https://bsky.app/profile/jsifalda.bsky.social](https://dub.sh/OjV5UtC)
-- **Author Web**: [https://craftengineer.com/](https://dub.sh/2aGWsiT)
-- **Project Web**: [https://yourpulse.cc](https://dub.sh/RSzQwoG)
+- **Author**: Jiri Sifalda, [@jsifalda](https://dub.sh/kWUczm4)
+- **Author Webs**: [Craft Engineer Blog](https://www.craftengineer.com/?ref=github-jsifalda/obsipulse-plugin), & [
+Engineering “Vibe Manager” Blog](https://blog.vibemanager.cc?ref=github-jsifalda/obsipulse-plugin)
+- **Project Web**: [https://yourpulse.cc](https://yourpulse.cc/?ref=github-jsifalda/obsipulse-plugin)
 
 ## FAQ
 
@@ -81,10 +80,6 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
-## Acknowledgments
-
-- Developed by [@jsifalda](https://dub.sh/I5tFaqk)
-- Inspired by lukeleppan's [Better Word Count](https://github.com/lukeleppan/better-word-count).
 
 ## Support the Project
 
