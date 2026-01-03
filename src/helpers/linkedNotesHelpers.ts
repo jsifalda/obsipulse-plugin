@@ -1,4 +1,4 @@
-import { App, TFile } from "obsidian"
+import { App, TFile } from 'obsidian'
 
 // Captures: [1] = note name, [2] = optional section/block reference (including #)
 export const LINKED_NOTES_REGEX = /!\[\[([^\]#]+)(#[^\]]+)?\]\]/g
@@ -10,7 +10,7 @@ export interface ParsedNoteReference {
 }
 
 export function parseNoteReference(fullReference: string): ParsedNoteReference {
-  const hashIndex = fullReference.indexOf("#")
+  const hashIndex = fullReference.indexOf('#')
 
   if (hashIndex === -1) {
     return { noteName: fullReference.trim() }
@@ -19,7 +19,7 @@ export function parseNoteReference(fullReference: string): ParsedNoteReference {
   const noteName = fullReference.substring(0, hashIndex).trim()
   const fragment = fullReference.substring(hashIndex + 1)
 
-  if (fragment.startsWith("^")) {
+  if (fragment.startsWith('^')) {
     return { noteName, blockId: fragment.substring(1) }
   }
 
@@ -49,10 +49,7 @@ export function findNoteFile(app: App, noteName: string): TFile | null {
   return null
 }
 
-export async function readNoteContent(
-  app: App,
-  noteFile: TFile
-): Promise<string> {
+export async function readNoteContent(app: App, noteFile: TFile): Promise<string> {
   try {
     return await app.vault.read(noteFile)
   } catch (error) {
@@ -63,7 +60,7 @@ export async function readNoteContent(
 
 export function removeFrontmatter(content: string): string {
   const frontmatterRegex = /^---\s*\n[\s\S]*?\n---\s*\n/
-  return content.replace(frontmatterRegex, "")
+  return content.replace(frontmatterRegex, '')
 }
 
 /**
@@ -73,13 +70,10 @@ export function removeFrontmatter(content: string): string {
  */
 export function removeHtmlComments(content: string): string {
   const htmlCommentRegex = /<!--[\s\S]*?-->/g
-  return content.replace(htmlCommentRegex, "")
+  return content.replace(htmlCommentRegex, '')
 }
 
-export function isCircularReference(
-  processingStack: Set<string>,
-  noteName: string
-): boolean {
+export function isCircularReference(processingStack: Set<string>, noteName: string): boolean {
   return processingStack.has(noteName)
 }
 
@@ -97,7 +91,7 @@ export function createCacheKey(
   section?: string,
   blockId?: string
 ): string {
-  const fragment = section ? `#${section}` : blockId ? `#^${blockId}` : ""
+  const fragment = section ? `#${section}` : blockId ? `#^${blockId}` : ''
   return `${noteName}${fragment}-${depth}`
 }
 
@@ -105,11 +99,8 @@ export function createCacheKey(
  * Extracts content under a specific heading from markdown content.
  * Returns content from the heading until the next heading of same or higher level.
  */
-export function extractSectionContent(
-  content: string,
-  sectionName: string
-): string | null {
-  const lines = content.split("\n")
+export function extractSectionContent(content: string, sectionName: string): string | null {
+  const lines = content.split('\n')
   const sectionNameLower = sectionName.toLowerCase()
 
   let capturing = false
@@ -146,24 +137,21 @@ export function extractSectionContent(
     return null
   }
 
-  return capturedLines.join("\n").trim()
+  return capturedLines.join('\n').trim()
 }
 
 /**
  * Extracts a block identified by ^block-id from markdown content.
  * Blocks are paragraphs or list items ending with ^block-id.
  */
-export function extractBlockContent(
-  content: string,
-  blockId: string
-): string | null {
-  const blockPattern = new RegExp(`\\^${escapeRegex(blockId)}\\s*$`, "m")
-  const lines = content.split("\n")
+export function extractBlockContent(content: string, blockId: string): string | null {
+  const blockPattern = new RegExp(`\\^${escapeRegex(blockId)}\\s*$`, 'm')
+  const lines = content.split('\n')
 
   for (let i = 0; i < lines.length; i++) {
     if (blockPattern.test(lines[i])) {
       // Found the line with the block ID
-      const blockLine = lines[i].replace(blockPattern, "").trim()
+      const blockLine = lines[i].replace(blockPattern, '').trim()
 
       // Check if it's a list item - include just the item
       if (/^[-*+]\s|^\d+\.\s/.test(blockLine)) {
@@ -175,24 +163,24 @@ export function extractBlockContent(
 
       // Go backwards to find paragraph start
       let start = i
-      while (start > 0 && lines[start - 1].trim() !== "") {
+      while (start > 0 && lines[start - 1].trim() !== '') {
         start--
       }
 
       // Go forwards to find paragraph end
       let end = i
-      while (end < lines.length && lines[end].trim() !== "") {
+      while (end < lines.length && lines[end].trim() !== '') {
         end++
       }
 
       for (let j = start; j < end; j++) {
-        const line = lines[j].replace(blockPattern, "").trim()
+        const line = lines[j].replace(blockPattern, '').trim()
         if (line) {
           paragraphLines.push(line)
         }
       }
 
-      return paragraphLines.join("\n")
+      return paragraphLines.join('\n')
     }
   }
 
@@ -200,5 +188,5 @@ export function extractBlockContent(
 }
 
 function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }

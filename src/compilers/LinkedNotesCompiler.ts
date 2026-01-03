@@ -1,4 +1,4 @@
-import { App, TFile } from "obsidian"
+import { App, TFile } from 'obsidian'
 import {
   LINKED_NOTES_REGEX,
   createCacheKey,
@@ -11,7 +11,7 @@ import {
   removeFrontmatter,
   removeHtmlComments,
   sanitizeNoteName,
-} from "../helpers/linkedNotesHelpers"
+} from '../helpers/linkedNotesHelpers'
 
 type PublishFile = TFile
 
@@ -38,7 +38,7 @@ export class LinkedNotesCompiler {
       const contentWithoutComments = removeHtmlComments(text)
       return await this.resolveLinkedNotes(contentWithoutComments, file, 0)
     } catch (error) {
-      console.error("LinkedNotesCompiler error:", error)
+      console.error('LinkedNotesCompiler error:', error)
       return text
     }
   }
@@ -66,12 +66,7 @@ export class LinkedNotesCompiler {
       const fragment = match[2] ? match[2].substring(1) : undefined // Remove leading #
 
       try {
-        const resolvedNote = await this.resolveNote(
-          noteName,
-          file,
-          depth,
-          fragment
-        )
+        const resolvedNote = await this.resolveNote(noteName, file, depth, fragment)
         if (resolvedNote) {
           resolvedContent = resolvedContent.replace(fullMatch, resolvedNote)
         }
@@ -102,8 +97,8 @@ export class LinkedNotesCompiler {
     const referenceKey = section
       ? `${noteName}#${section}`
       : blockId
-      ? `${noteName}#^${blockId}`
-      : noteName
+        ? `${noteName}#^${blockId}`
+        : noteName
 
     if (isCircularReference(this.processingStack, referenceKey)) {
       console.warn(`Circular reference detected for note: ${referenceKey}`)
@@ -122,17 +117,12 @@ export class LinkedNotesCompiler {
       const noteContent = await readNoteContent(this.app, noteFile)
       const contentWithoutFrontmatter = removeFrontmatter(noteContent)
       // Remove HTML comments from linked note content after frontmatter removal
-      const contentWithoutComments = removeHtmlComments(
-        contentWithoutFrontmatter
-      )
+      const contentWithoutComments = removeHtmlComments(contentWithoutFrontmatter)
 
       let extractedContent: string | null = contentWithoutComments
 
       if (section) {
-        extractedContent = extractSectionContent(
-          contentWithoutComments,
-          section
-        )
+        extractedContent = extractSectionContent(contentWithoutComments, section)
         if (!extractedContent) {
           console.warn(`Section "${section}" not found in note: ${noteName}`)
           return null
@@ -145,11 +135,7 @@ export class LinkedNotesCompiler {
         }
       }
 
-      const resolvedContent = await this.resolveLinkedNotes(
-        extractedContent,
-        noteFile,
-        depth + 1
-      )
+      const resolvedContent = await this.resolveLinkedNotes(extractedContent, noteFile, depth + 1)
 
       this.resolvedNotes.set(cacheKey, resolvedContent)
       return resolvedContent

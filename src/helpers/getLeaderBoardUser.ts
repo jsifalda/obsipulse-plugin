@@ -3,7 +3,7 @@ import { getLocalTodayDate } from './getLocalTodayDate'
 
 export const getLeaderBoardUser = (
   userId: string,
-  plugin?: any, // Optional plugin instance for private mode checking
+  plugin?: any // Optional plugin instance for private mode checking
 ): Promise<{
   user: { ranking: number; userId: string; vaults: { name: string; ranking: number }[] } | undefined
   totalCount: number

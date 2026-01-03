@@ -9,9 +9,11 @@ function escapeRegExp(string: string) {
 }
 
 export type TCompilerStep = (
-  publishFile: PublishFile,
+  publishFile: PublishFile
   // publishFile: any,
-) => ((partiallyCompiledContent: string) => Promise<string>) | ((partiallyCompiledContent: string) => string)
+) =>
+  | ((partiallyCompiledContent: string) => Promise<string>)
+  | ((partiallyCompiledContent: string) => string)
 
 export class DataviewCompiler {
   constructor() {}
@@ -26,7 +28,10 @@ export class DataviewCompiler {
 
     const dataviewJsPrefix = dvApi.settings.dataviewJsKeyword
 
-    const dataViewJsRegex = new RegExp('```' + escapeRegExp(dataviewJsPrefix) + '\\s(.+?)```', 'gsm')
+    const dataViewJsRegex = new RegExp(
+      '```' + escapeRegExp(dataviewJsPrefix) + '\\s(.+?)```',
+      'gsm'
+    )
     const dataviewJsMatches = text.matchAll(dataViewJsRegex)
 
     const inlineQueryPrefix = dvApi.settings.inlineQueryPrefix
@@ -36,7 +41,10 @@ export class DataviewCompiler {
 
     const inlineJsQueryPrefix = dvApi.settings.inlineJsQueryPrefix
 
-    const inlineJsDataViewRegex = new RegExp('`' + escapeRegExp(inlineJsQueryPrefix) + '(.+?)`', 'gsm')
+    const inlineJsDataViewRegex = new RegExp(
+      '`' + escapeRegExp(inlineJsQueryPrefix) + '(.+?)`',
+      'gsm'
+    )
     const inlineJsMatches = text.matchAll(inlineJsDataViewRegex)
 
     if (!matches && !inlineMatches && !dataviewJsMatches && !inlineJsMatches) {
@@ -62,7 +70,7 @@ export class DataviewCompiler {
         console.log(e)
 
         new Notice(
-          'Unable to render dataview query. Please update the dataview plugin to the latest version.',
+          'Unable to render dataview query. Please update the dataview plugin to the latest version.'
         )
 
         return queryBlock[0]
@@ -91,7 +99,7 @@ export class DataviewCompiler {
         console.log(e)
 
         new Notice(
-          'Unable to render dataviewjs query. Please update the dataview plugin to the latest version.',
+          'Unable to render dataviewjs query. Please update the dataview plugin to the latest version.'
         )
 
         return queryBlock[0]
@@ -115,7 +123,7 @@ export class DataviewCompiler {
         console.log(e)
 
         new Notice(
-          'Unable to render inline dataview query. Please update the dataview plugin to the latest version.',
+          'Unable to render inline dataview query. Please update the dataview plugin to the latest version.'
         )
 
         return inlineQuery[0]
@@ -144,7 +152,7 @@ export class DataviewCompiler {
         console.error(e)
 
         new Notice(
-          'Unable to render inline dataviewjs query. Please update the dataview plugin to the latest version.',
+          'Unable to render inline dataviewjs query. Please update the dataview plugin to the latest version.'
         )
 
         return inlineJsQuery[0]
@@ -199,7 +207,11 @@ export class DataviewCompiler {
   }
 }
 
-function tryDVEvaluate(query: string, file: PublishFile, dvApi: DataviewApi): string | undefined | null {
+function tryDVEvaluate(
+  query: string,
+  file: PublishFile,
+  dvApi: DataviewApi
+): string | undefined | null {
   let result = ''
 
   try {

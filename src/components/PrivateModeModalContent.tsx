@@ -7,7 +7,10 @@ interface PrivateModeModalContentProps {
   onClose: () => void
 }
 
-export const PrivateModeModalContent: React.FC<PrivateModeModalContentProps> = ({ data, onClose }) => {
+export const PrivateModeModalContent: React.FC<PrivateModeModalContentProps> = ({
+  data,
+  onClose,
+}) => {
   return (
     <div className="private-mode-modal">
       <div className="private-mode-modal-header">
